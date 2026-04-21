@@ -1,0 +1,153 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ─────────────────────────────────────────────────────────────
+   BRAND TOKENS (sourced from the Squash index.css reference).
+   Exposed via Tailwind v4's @theme so they're usable as
+   bg-primary, text-foreground, etc.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  /* Brand */
+  --color-primary: #e8640f;
+  --color-primary-hover: #e55a2b;
+  --color-primary-subtle: #fff5ed;
+  --color-primary-subtle-border: #fddcc9;
+  --color-accent-warm: #ffa07a;
+
+  /* Neutrals — warm, editorial off-white */
+  --color-background: #faf9f6;
+  --color-surface: #ffffff;
+  --color-background-secondary: #f3f2ee;
+  --color-background-tertiary: #f7f6f2;
+  --color-foreground: #1a1a1a;
+  --color-foreground-secondary: #4a4a4a;
+  --color-foreground-muted: #7a7873;
+  --color-border: #e5e2dc;
+  --color-border-light: #efece5;
+
+  /* Feedback */
+  --color-success: #4caf50;
+  --color-warning: #ffc107;
+  --color-error: #f44336;
+  --color-info: #2196f3;
+  --color-success-subtle: #f0fdf4;
+  --color-warning-subtle: #fef3c7;
+  --color-error-subtle: #fee2e2;
+  --color-info-subtle: #eff6ff;
+
+  /* Fonts */
+  --font-display: var(--font-instrument-serif), Cambria, Georgia, serif;
+  --font-sans: var(--font-geist-sans), Calibri, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", Menlo, monospace;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BASE
+   ───────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   HERO GRADIENT + GRID BACKGROUNDS
+   ───────────────────────────────────────────────────────────── */
+.hero-gradient {
+  background:
+    radial-gradient(60% 80% at 50% 0%, rgba(232, 100, 15, 0.12) 0%, transparent 70%),
+    radial-gradient(40% 60% at 80% 20%, rgba(255, 160, 122, 0.18) 0%, transparent 70%),
+    linear-gradient(180deg, #faf9f6 0%, #fff 100%);
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(26, 26, 26, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(26, 26, 26, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+.dot-bg {
+  background-image: radial-gradient(rgba(26, 26, 26, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LOGO MARQUEE (CSS-only infinite scroll)
+   ───────────────────────────────────────────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FADE-UP ENTRANCE (for hero stagger)
+   ───────────────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TYPEWRITER CARET (chat mock)
+   ───────────────────────────────────────────────────────────── */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.caret { animation: blink 1s steps(1) infinite; }
+
+/* ─────────────────────────────────────────────────────────────
+   CARD HOVER
+   ───────────────────────────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary-subtle-border);
+  box-shadow: 0 8px 24px -12px rgba(232, 100, 15, 0.18);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FOCUS RINGS (a11y)
+   ───────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}

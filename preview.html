@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Squash — AI for Product Managers | Stop building on gut</title>
+<meta name="description" content="Squash is the AI decision layer for Product Managers. Synthesize tickets, sessions, and analytics in plain English — then ship PRDs, dashboards, and specs grounded in real user signal." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ────────── BRAND TOKENS ────────── */
+:root {
+  --color-primary: #e8640f;
+  --color-primary-hover: #e55a2b;
+  --color-primary-subtle: #fff5ed;
+  --color-primary-subtle-border: #fddcc9;
+  --color-accent-warm: #ffa07a;
+  --color-background: #faf9f6;
+  --color-surface: #ffffff;
+  --color-background-secondary: #f3f2ee;
+  --color-background-tertiary: #f7f6f2;
+  --color-foreground: #1a1a1a;
+  --color-foreground-secondary: #4a4a4a;
+  --color-foreground-muted: #7a7873;
+  --color-border: #e5e2dc;
+  --color-border-light: #efece5;
+  --color-success: #4caf50;
+  --color-warning: #ffc107;
+  --color-error: #f44336;
+  --color-info: #2196f3;
+  --color-primary-subtle-bg: #fff5ed;
+  --color-success-subtle: #f0fdf4;
+  --color-error-subtle: #fee2e2;
+  --font-display: 'Instrument Serif', Cambria, Georgia, serif;
+  --font-sans: 'Geist', Calibri, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', 'SF Mono', Menlo, monospace;
+}
+
+/* ────────── BASE ────────── */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; border: none; background: none; }
+::selection { background: var(--color-primary); color: #fff; }
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: 4px; }
+
+img, svg { display: block; max-width: 100%; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3, h4, h5, h6, p { margin: 0; }
+
+/* ────────── LAYOUT ────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+@media (min-width: 1024px) { .container { padding: 0 32px; } }
+.section { padding: 96px 0; }
+@media (min-width: 768px) { .section { padding: 128px 0; } }
+
+/* ────────── HEADER ────────── */
+.header {
+  position: sticky; top: 0; z-index: 50;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+.header.scrolled {
+  background: rgba(250, 249, 246, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+}
+.nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.nav-links { display: none; gap: 32px; align-items: center; }
+.nav-links a { font-size: 14px; color: var(--color-foreground-secondary); transition: color 0.2s; }
+.nav-links a:hover { color: var(--color-foreground); }
+.nav-cta { display: none; gap: 12px; align-items: center; }
+.nav-cta .login { font-size: 14px; color: var(--color-foreground-secondary); }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 18px; border-radius: 999px;
+  background: var(--color-foreground); color: #fff;
+  font-size: 14px; font-weight: 500;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--color-primary); }
+.btn-primary.orange { background: var(--color-primary); }
+.btn-primary.orange:hover { background: var(--color-primary-hover); }
+.btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 10px 18px; border-radius: 999px;
+  background: #fff; border: 1px solid var(--color-border); color: var(--color-foreground);
+  font-size: 14px; font-weight: 500;
+  transition: border-color 0.2s;
+}
+.btn-secondary:hover { border-color: var(--color-foreground); }
+@media (min-width: 768px) {
+  .nav-links, .nav-cta { display: flex; }
+  .mobile-toggle { display: none; }
+}
+
+/* ────────── LOGO ────────── */
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-mark { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #e8640f, #ffa07a); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; font-family: var(--font-sans); }
+.logo-word { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+
+/* ────────── HERO ────────── */
+.hero {
+  position: relative; overflow: hidden;
+  padding: 64px 0 96px;
+  background:
+    radial-gradient(60% 80% at 50% 0%, rgba(232, 100, 15, 0.12) 0%, transparent 70%),
+    radial-gradient(40% 60% at 80% 20%, rgba(255, 160, 122, 0.18) 0%, transparent 70%),
+    linear-gradient(180deg, #faf9f6 0%, #fff 100%);
+}
+@media (min-width: 768px) { .hero { padding: 96px 0 128px; } }
+.grid-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(26, 26, 26, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(26, 26, 26, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+.hero-inner { position: relative; display: grid; gap: 40px; align-items: center; }
+@media (min-width: 1024px) { .hero-inner { grid-template-columns: 1fr 1fr; gap: 48px; } }
+
+.eyebrow-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 4px 12px; border-radius: 999px;
+  background: #fff; border: 1px solid var(--color-border);
+  font-size: 11px; font-weight: 500; color: var(--color-foreground-secondary);
+}
+.pulse-dot {
+  position: relative; display: inline-flex; width: 6px; height: 6px;
+}
+.pulse-dot::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: var(--color-primary); opacity: 0.75;
+  animation: ping 1.6s cubic-bezier(0,0,0.2,1) infinite;
+}
+.pulse-dot::after {
+  content: ''; position: relative; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--color-primary);
+}
+@keyframes ping {
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+.h1 {
+  margin-top: 24px;
+  font-family: var(--font-display);
+  font-size: clamp(44px, 6vw, 64px);
+  line-height: 1.02; letter-spacing: -0.02em;
+  font-weight: 400;
+}
+.h1 .italic { font-style: italic; color: var(--color-primary); }
+
+.subhead {
+  margin-top: 20px; max-width: 560px;
+  font-size: 17px; line-height: 1.65;
+  color: var(--color-foreground-secondary);
+}
+@media (min-width: 1024px) { .subhead { font-size: 18px; } }
+
+.cta-row { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+@media (min-width: 640px) { .cta-row { flex-direction: row; } }
+
+.trust-row {
+  margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px 24px;
+  font-size: 12px; color: var(--color-foreground-muted);
+}
+.trust-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ────────── FADE-UP ENTRANCE ────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* ────────── CHAT MOCK ────────── */
+.chat-mock {
+  border-radius: 20px; background: #fff;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 30px 80px -30px rgba(26, 26, 26, 0.18);
+  overflow: hidden;
+}
+.chat-chrome {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-light);
+  background: var(--color-background-tertiary);
+}
+.chat-dots { display: flex; gap: 6px; }
+.chat-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.chat-dots span:nth-child(1) { background: rgba(244, 67, 54, 0.6); }
+.chat-dots span:nth-child(2) { background: rgba(255, 193, 7, 0.6); }
+.chat-dots span:nth-child(3) { background: rgba(76, 175, 80, 0.6); }
+.chat-url { font-family: var(--font-mono); font-size: 11px; color: var(--color-foreground-muted); }
+.chat-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+@media (min-width: 640px) { .chat-body { padding: 24px; } }
+.prompt-row { display: flex; gap: 12px; }
+.prompt-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-background-secondary); flex-shrink: 0; }
+.prompt-text { padding-top: 4px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; }
+.caret { display: inline-block; width: 2px; height: 14px; background: var(--color-primary); vertical-align: middle; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+.tool-use {
+  margin-left: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px; overflow: hidden;
+}
+.tool-use-header {
+  padding: 10px 14px;
+  background: var(--color-primary-subtle);
+  border-bottom: 1px solid var(--color-primary-subtle-border);
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500;
+}
+.tool-use-row {
+  padding: 8px 14px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 12px; color: var(--color-foreground-secondary);
+}
+.tool-use-row:last-child { border-bottom: none; }
+
+.summary-block {
+  margin-left: 40px;
+  padding: 14px;
+  border-radius: 8px;
+  background: var(--color-primary-subtle);
+  border: 1px solid var(--color-primary-subtle-border);
+  font-size: 13px; line-height: 1.65;
+  color: var(--color-foreground);
+}
+
+.metric-tiles { margin-left: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.metric-tile { border: 1px solid var(--color-border); border-radius: 8px; padding: 10px; }
+.metric-tile .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-foreground-muted); }
+.metric-tile .value { font-size: 18px; font-weight: 600; margin-top: 4px; }
+.metric-tile .delta { font-size: 10px; color: var(--color-error); }
+
+.mini-chart-card { margin-left: 40px; border: 1px solid var(--color-border); border-radius: 8px; padding: 14px; }
+.mini-chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.mini-chart-head .label { font-size: 11px; font-weight: 600; }
+.mini-chart-head .src { font-family: var(--font-mono); font-size: 9px; color: var(--color-foreground-muted); }
+
+.action-card { margin-left: 40px; border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; }
+.action-card-head { padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-light); }
+.action-card-meta { display: flex; align-items: center; gap: 8px; }
+.tool-mark { width: 16px; height: 16px; border-radius: 4px; background: #0052CC; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+.action-source { font-size: 11px; font-weight: 600; color: var(--color-foreground-muted); }
+.status-pill { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; background: var(--color-success-subtle); color: var(--color-success); }
+.action-card-body { padding: 10px 14px; }
+.action-card-body .title { font-size: 12px; font-weight: 600; line-height: 1.4; }
+.action-card-body .meta { margin-top: 4px; font-size: 11px; color: var(--color-foreground-muted); }
+
+/* ────────── LOGO CLOUD ────────── */
+.logo-cloud {
+  padding: 40px 0;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.logo-cloud .eyebrow { text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-foreground-muted); }
+.logo-cloud-grid {
+  margin-top: 24px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 24px;
+  align-items: center;
+}
+@media (min-width: 640px) { .logo-cloud-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .logo-cloud-grid { grid-template-columns: repeat(8, 1fr); } }
+.logo-cloud-name {
+  text-align: center; font-family: var(--font-display); font-size: 18px; font-weight: 400;
+  color: var(--color-foreground-muted); transition: color 0.2s;
+}
+.logo-cloud-name:hover { color: var(--color-foreground); }
+
+/* ────────── SECTION HEADINGS ────────── */
+.section-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-primary); }
+.section-h2 {
+  margin-top: 12px;
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(36px, 5vw, 48px);
+  line-height: 1.08; letter-spacing: -0.02em;
+  max-width: 720px;
+}
+.section-h2 .muted { color: var(--color-foreground-muted); }
+.section-intro {
+  margin-top: 16px; max-width: 640px;
+  font-size: 16px; line-height: 1.7;
+  color: var(--color-foreground-secondary);
+}
+
+/* ────────── CARDS ────────── */
+.card {
+  padding: 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s;
+  display: flex; flex-direction: column;
+}
+.card:hover { transform: translateY(-2px); border-color: var(--color-primary-subtle-border); box-shadow: 0 8px 24px -12px rgba(232, 100, 15, 0.18); }
+.card-tertiary { background: var(--color-background-tertiary); }
+
+/* ────────── PROBLEM ────────── */
+.problem-grid { margin-top: 48px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 768px) { .problem-grid { grid-template-columns: repeat(3, 1fr); } }
+.problem-stat { display: flex; align-items: baseline; gap: 8px; }
+.problem-stat .value { font-family: var(--font-display); font-size: 44px; line-height: 1; color: var(--color-primary); }
+.problem-stat .unit { font-size: 12px; color: var(--color-foreground-muted); }
+.problem-title { margin-top: 20px; font-size: 17px; font-weight: 600; line-height: 1.4; }
+.problem-body { margin-top: 10px; font-size: 14px; line-height: 1.65; color: var(--color-foreground-secondary); }
+
+/* ────────── SOLUTION ────────── */
+.solution { background: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+.solution-grid { margin-top: 56px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 768px) { .solution-grid { grid-template-columns: repeat(2, 1fr); } }
+.solution-meta { display: flex; align-items: center; gap: 8px; }
+.solution-meta .idx { font-size: 11px; font-weight: 600; color: var(--color-foreground-muted); }
+.solution-meta .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-primary); }
+.solution-title { margin-top: 16px; font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; }
+.solution-body { margin-top: 12px; font-size: 14.5px; line-height: 1.65; color: var(--color-foreground-secondary); flex: 1; }
+.solution-visual { margin-top: 24px; border: 1px solid var(--color-border); background: #fff; border-radius: 8px; padding: 16px; }
+
+/* Solution visuals */
+.ticket-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ticket-row .label { font-size: 11px; color: var(--color-foreground-secondary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ticket-row .count { font-family: var(--font-mono); font-size: 10px; color: var(--color-foreground-muted); }
+.ticket-row .bar { width: 64px; height: 6px; border-radius: 999px; background: var(--color-background-secondary); overflow: hidden; }
+.ticket-row .bar > i { display: block; height: 100%; background: var(--color-primary); }
+
+.sql-preview { font-family: var(--font-mono); font-size: 10px; line-height: 1.6; color: var(--color-foreground-muted); background: var(--color-background-tertiary); border: 1px solid var(--color-border-light); border-radius: 4px; padding: 8px; margin: 8px 0; }
+.sql-prompt { font-family: var(--font-mono); font-size: 11px; color: var(--color-foreground); }
+.sql-status { display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--color-success); }
+
+.alert-row { display: flex; gap: 10px; align-items: flex-start; }
+.alert-icon { width: 24px; height: 24px; border-radius: 4px; background: var(--color-error-subtle); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.alert-title { font-size: 11px; font-weight: 600; }
+.alert-meta { font-size: 10px; color: var(--color-foreground-muted); margin-top: 2px; }
+
+.prd-title { font-size: 11px; font-weight: 600; }
+.prd-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.prd-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--color-primary); }
+.prd-label { font-size: 10px; color: var(--color-foreground-secondary); }
+
+/* ────────── FEATURES ────────── */
+.features-grid { margin-top: 56px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 768px) { .features-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .features-grid { grid-template-columns: repeat(3, 1fr); } }
+.feat-head { display: flex; align-items: center; justify-content: space-between; }
+.feat-icon { width: 40px; height: 40px; border-radius: 8px; background: var(--color-primary-subtle); color: var(--color-primary); display: flex; align-items: center; justify-content: center; }
+.feat-idx { font-family: var(--font-mono); font-size: 10px; color: var(--color-foreground-muted); }
+.feat-title { margin-top: 20px; font-size: 17px; font-weight: 600; line-height: 1.4; }
+.feat-body { margin-top: 8px; font-size: 13.5px; line-height: 1.65; color: var(--color-foreground-secondary); flex: 1; }
+.feat-tag { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--color-border-light); font-family: var(--font-mono); font-size: 11px; color: var(--color-foreground-muted); }
+
+/* ────────── HOW IT WORKS ────────── */
+.how { background: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+.how-list {
+  margin-top: 64px; position: relative;
+  display: grid; grid-template-columns: 1fr; gap: 40px;
+}
+@media (min-width: 768px) {
+  .how-list { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .how-list::before { content: ''; position: absolute; top: 24px; left: 8%; right: 8%; height: 1px; background: linear-gradient(to right, transparent, var(--color-border), transparent); }
+}
+.how-step-num { position: relative; z-index: 2; width: 48px; height: 48px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+.how-step-title { margin-top: 24px; font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 1.2; letter-spacing: -0.01em; }
+.how-step-body { margin-top: 10px; font-size: 14.5px; line-height: 1.65; color: var(--color-foreground-secondary); }
+
+/* ────────── USE CASES ────────── */
+.uc-grid { margin-top: 56px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 768px) { .uc-grid { grid-template-columns: repeat(2, 1fr); } }
+.uc-persona { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-primary); }
+.uc-title { margin-top: 12px; font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 1.2; letter-spacing: -0.01em; }
+.uc-body { margin-top: 12px; font-size: 14.5px; line-height: 1.65; color: var(--color-foreground-secondary); }
+
+/* ────────── INTEGRATIONS ────────── */
+.integrations { background: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); overflow: hidden; }
+.marquee-wrap {
+  margin-top: 56px; position: relative;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+.marquee-track {
+  display: flex; gap: 12px; width: max-content;
+  animation: marquee 40s linear infinite;
+}
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+.chip {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-radius: 999px;
+  background: var(--color-background-tertiary); border: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.chip-mark {
+  width: 20px; height: 20px; border-radius: 4px;
+  color: #fff; display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600;
+}
+.chip-name { font-size: 13px; font-weight: 500; }
+
+.cat-grid { margin-top: 64px; display: grid; grid-template-columns: 1fr; gap: 32px; }
+@media (min-width: 640px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .cat-grid { grid-template-columns: repeat(4, 1fr); } }
+.cat-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-foreground-muted); padding-bottom: 12px; border-bottom: 1px solid var(--color-border); }
+.cat-list { margin-top: 12px; }
+.cat-item { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 13.5px; color: var(--color-foreground-secondary); }
+.cat-mark { width: 18px; height: 18px; border-radius: 4px; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; }
+
+/* ────────── TESTIMONIALS ────────── */
+.tm-grid { margin-top: 56px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 768px) { .tm-grid { grid-template-columns: repeat(3, 1fr); } }
+.tm-quote-icon { color: var(--color-primary); opacity: 0.6; }
+.tm-body { margin-top: 16px; font-family: var(--font-display); font-size: 16px; line-height: 1.65; flex: 1; }
+.tm-foot { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--color-border-light); }
+.tm-name { font-size: 13px; font-weight: 600; }
+.tm-role { font-size: 12px; color: var(--color-foreground-muted); }
+
+/* ────────── FAQ ────────── */
+.faq { background: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+.faq-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+.faq-inner .section-eyebrow,
+.faq-inner .section-h2 { text-align: center; margin-left: auto; margin-right: auto; }
+.faq-list {
+  margin-top: 48px; text-align: left;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.faq-item { padding: 8px 0; border-bottom: 1px solid var(--color-border); }
+.faq-item:last-child { border-bottom: none; }
+.faq-btn {
+  width: 100%; display: flex; justify-content: space-between; gap: 16px;
+  padding: 16px 0; text-align: left;
+}
+.faq-q { font-size: 16px; font-weight: 500; line-height: 1.4; }
+@media (min-width: 768px) { .faq-q { font-size: 18px; } }
+.faq-chev { flex-shrink: 0; transition: transform 0.3s, color 0.3s; color: var(--color-foreground-muted); margin-top: 2px; }
+.faq-item.open .faq-chev { transform: rotate(180deg); color: var(--color-primary); }
+.faq-panel {
+  display: grid; grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.3s ease-out, opacity 0.3s, padding 0.3s;
+}
+.faq-panel > div { overflow: hidden; }
+.faq-item.open .faq-panel {
+  grid-template-rows: 1fr; opacity: 1; padding-bottom: 16px;
+}
+.faq-a { font-size: 15px; line-height: 1.7; color: var(--color-foreground-secondary); padding-right: 32px; }
+.faq-footer { margin-top: 40px; text-align: center; font-size: 14px; color: var(--color-foreground-muted); }
+.faq-footer a { color: var(--color-primary); font-weight: 500; }
+.faq-footer a:hover { text-decoration: underline; }
+
+/* ────────── FINAL CTA ────────── */
+.final {
+  position: relative; overflow: hidden;
+  padding: 96px 0; text-align: center;
+  background:
+    radial-gradient(60% 80% at 50% 0%, rgba(232, 100, 15, 0.12) 0%, transparent 70%),
+    radial-gradient(40% 60% at 80% 20%, rgba(255, 160, 122, 0.18) 0%, transparent 70%),
+    var(--color-background);
+}
+@media (min-width: 768px) { .final { padding: 128px 0; } }
+.final-dots { position: absolute; inset: 0; opacity: 0.3; background-image: radial-gradient(rgba(26, 26, 26, 0.08) 1px, transparent 1px); background-size: 20px 20px; }
+.final-inner { position: relative; max-width: 720px; margin: 0 auto; padding: 0 24px; }
+.final-h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(40px, 6vw, 56px); line-height: 1.05; letter-spacing: -0.02em; }
+.final-h2 .italic { font-style: italic; color: var(--color-primary); }
+.final-body { margin-top: 24px; font-size: 17px; line-height: 1.65; color: var(--color-foreground-secondary); max-width: 560px; margin-left: auto; margin-right: auto; }
+.final-ctas { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+@media (min-width: 640px) { .final-ctas { flex-direction: row; } }
+
+/* ────────── FOOTER ────────── */
+.footer { background: var(--color-background); border-top: 1px solid var(--color-border); padding: 64px 0; }
+.footer-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+@media (min-width: 1024px) { .footer-grid { grid-template-columns: 4fr 8fr; } }
+.footer-brand-body { margin-top: 16px; font-size: 14px; line-height: 1.65; color: var(--color-foreground-secondary); max-width: 320px; }
+.footer-social { margin-top: 20px; display: flex; gap: 12px; }
+.footer-social a { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center; color: var(--color-foreground-secondary); transition: border-color 0.2s; }
+.footer-social a:hover { border-color: var(--color-foreground); }
+.footer-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+@media (min-width: 768px) { .footer-cols { grid-template-columns: repeat(4, 1fr); } }
+.footer-col-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.footer-col ul { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { font-size: 13px; color: var(--color-foreground-secondary); transition: color 0.2s; }
+.footer-col a:hover { color: var(--color-foreground); }
+.footer-base {
+  margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--color-border);
+  display: flex; flex-direction: column; gap: 12px;
+  justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--color-foreground-muted);
+}
+@media (min-width: 640px) { .footer-base { flex-direction: row; } }
+</style>
+
+<!-- JSON-LD for SEO + AI optimization -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Squash",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "description": "AI-powered decision-making interface for Product Managers.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What is Squash?", "acceptedAnswer": { "@type": "Answer", "text": "Squash is an AI decision-making interface built for Product Managers. It connects to your tools and synthesizes them into prioritized insights, charts, PRDs, and specs on demand." } },
+    { "@type": "Question", "name": "Who is Squash for?", "acceptedAnswer": { "@type": "Answer", "text": "Product Managers, Heads of Product, and product decision makers at SaaS and consumer tech companies." } }
+  ]
+}
+</script>
+</head>
+
+<body>
+
+<!-- ════════════════════════ HEADER ════════════════════════ -->
+<header class="header" id="header">
+  <div class="container nav" aria-label="Primary">
+    <a href="/" class="logo" aria-label="Squash home">
+      <span class="logo-mark">S</span>
+      <span class="logo-word">Squash</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#solution">Product</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#integrations">Integrations</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="/login" class="login">Log in</a>
+      <a href="/signup" class="btn-primary">
+        Start free
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════ HERO ════════════════════════ -->
+<section class="hero">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <div>
+      <div class="eyebrow-pill fade-up" style="animation-delay: 0ms">
+        <span class="pulse-dot"></span>
+        New · Squash 1.0 is live for early access teams
+      </div>
+      <h1 class="h1 fade-up" style="animation-delay: 80ms">
+        Stop building on gut.<br>
+        <span class="italic">Ship what users actually want.</span>
+      </h1>
+      <p class="subhead fade-up" style="animation-delay: 180ms">
+        Squash is the AI decision layer for Product Managers. It reads your tickets, session recordings, and analytics — then hands you a prioritized roadmap, cited to real users. Ask anything across your stack in plain English.
+      </p>
+      <div class="cta-row fade-up" style="animation-delay: 280ms">
+        <a href="/signup" class="btn-primary orange">
+          Start free — no credit card
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="/demo" class="btn-secondary">Book a demo</a>
+      </div>
+      <div class="trust-row fade-up" style="animation-delay: 380ms">
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          SOC 2 Type II
+        </span>
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Your data never trains our models
+        </span>
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          10-minute setup
+        </span>
+      </div>
+    </div>
+
+    <!-- Chat Mock -->
+    <div class="fade-up" style="animation-delay: 460ms">
+      <div class="chat-mock">
+        <div class="chat-chrome">
+          <div class="chat-dots"><span></span><span></span><span></span></div>
+          <span class="chat-url">squash.ai / checkout-analysis</span>
+          <span style="width:40px"></span>
+        </div>
+        <div class="chat-body">
+          <div class="prompt-row">
+            <div class="prompt-avatar"></div>
+            <div class="prompt-text">Why is checkout conversion down on Android this week? Synthesize the tickets and draft a Jira.<span class="caret"></span></div>
+          </div>
+
+          <div class="tool-use">
+            <div class="tool-use-header">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8640f" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Analysis complete · 4 tools used
+            </div>
+            <div class="tool-use-row">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Querying BigQuery · checkout_events
+            </div>
+            <div class="tool-use-row">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Clustering 412 Zendesk tickets
+            </div>
+            <div class="tool-use-row">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Scanning 38 session recordings for rage clicks
+            </div>
+            <div class="tool-use-row">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Drafting Jira ticket SQ-519
+            </div>
+          </div>
+
+          <div class="summary-block">
+            Android checkout conversion dropped to 2.1% (↓0.9 pts) this week. Root cause: payment-step crash on Android 14 after the 4.2.1 release — 38% of affected users rage-clicked the Pay button 3+ times before exiting.
+          </div>
+
+          <div class="metric-tiles">
+            <div class="metric-tile">
+              <div class="label">Android CVR</div>
+              <div class="value">2.1%</div>
+              <div class="delta">▼ −0.9 pts</div>
+            </div>
+            <div class="metric-tile">
+              <div class="label">Rage clicks</div>
+              <div class="value">38%</div>
+              <div class="delta">▼ +24 pts</div>
+            </div>
+            <div class="metric-tile">
+              <div class="label">Tickets</div>
+              <div class="value">412</div>
+              <div class="delta">▼ 3× normal</div>
+            </div>
+          </div>
+
+          <div class="mini-chart-card">
+            <div class="mini-chart-head">
+              <span class="label">Daily conversion · last 14 days</span>
+              <span class="src">BigQuery</span>
+            </div>
+            <svg viewBox="0 0 400 80" style="width:100%;height:64px" aria-label="Daily conversion chart">
+              <defs>
+                <linearGradient id="heroChart" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#E8640F" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#E8640F" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="0" x2="400" y2="0" stroke="#EFECE5"/>
+              <line x1="0" y1="20" x2="400" y2="20" stroke="#EFECE5"/>
+              <line x1="0" y1="40" x2="400" y2="40" stroke="#EFECE5"/>
+              <line x1="0" y1="60" x2="400" y2="60" stroke="#EFECE5"/>
+              <path d="M0,20 L29,15 L57,25 L86,10 L114,22 L143,30 L171,28 L200,38 L229,35 L257,48 L286,55 L314,45 L343,60 L371,50 L400,62 L400,80 L0,80 Z" fill="url(#heroChart)"/>
+              <path d="M0,20 L29,15 L57,25 L86,10 L114,22 L143,30 L171,28 L200,38 L229,35 L257,48 L286,55 L314,45 L343,60 L371,50 L400,62" fill="none" stroke="#E8640F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-card-meta">
+                <span class="tool-mark">J</span>
+                <span class="action-source">Jira · Draft</span>
+              </div>
+              <span class="status-pill">Ready</span>
+            </div>
+            <div class="action-card-body">
+              <div class="title">[P1] Android 14 payment-step crash after 4.2.1 release</div>
+              <div class="meta">SQ-519 · Squash Web · Linked: 412 tickets · 38 sessions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ LOGO CLOUD ════════════════════════ -->
+<section class="logo-cloud" aria-label="Teams using Squash">
+  <div class="container">
+    <p class="eyebrow">Trusted by product teams moving fast</p>
+    <div class="logo-cloud-grid">
+      <div class="logo-cloud-name">Lumen</div>
+      <div class="logo-cloud-name">Northwind</div>
+      <div class="logo-cloud-name">Kepler</div>
+      <div class="logo-cloud-name">Halcyon</div>
+      <div class="logo-cloud-name">Meridian</div>
+      <div class="logo-cloud-name">Fieldstone</div>
+      <div class="logo-cloud-name">Silverline</div>
+      <div class="logo-cloud-name">Observa</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ PROBLEM ════════════════════════ -->
+<section class="section" id="problem" aria-labelledby="problem-heading">
+  <div class="container">
+    <p class="section-eyebrow">The problem</p>
+    <h2 class="section-h2" id="problem-heading">
+      Your customers are already telling you what to build.
+      <span class="muted">You just don't have time to listen.</span>
+    </h2>
+    <div class="problem-grid">
+      <article class="card">
+        <div class="problem-stat"><span class="value">500</span><span class="unit">tickets/week</span></div>
+        <h3 class="problem-title">The signal is there. The time isn't.</h3>
+        <p class="problem-body">Every complaint, every rage quit, every feature request is already in your Zendesk and Intercom. But nobody reads all 500. Patterns that would actually move retention never make it into the planning doc.</p>
+      </article>
+      <article class="card">
+        <div class="problem-stat"><span class="value">2 wks</span><span class="unit">wait on the analyst</span></div>
+        <h3 class="problem-title">The dashboard you asked for ships after the decision.</h3>
+        <p class="problem-body">Product Managers file a data request, the analyst writes SQL, the chart lands a week later. By then you've already shipped on vibes. The rest of the org builds its own private dashboards, and nobody agrees on the numbers.</p>
+      </article>
+      <article class="card">
+        <div class="problem-stat"><span class="value">3</span><span class="unit">hires per team</span></div>
+        <h3 class="problem-title">Analysts, researchers, product ops — all billing for glue work.</h3>
+        <p class="problem-body">Orgs staff up entire functions just to turn raw signal into decisions. Most of that work is synthesis the LLM era should have collapsed by now. Budget-constrained teams just… skip it.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ SOLUTION ════════════════════════ -->
+<section class="section solution" id="solution" aria-labelledby="solution-heading">
+  <div class="container">
+    <p class="section-eyebrow">The solution</p>
+    <h2 class="section-h2" id="solution-heading">
+      One chat. Your whole product stack.
+      <span class="muted">Answers grounded in real signal.</span>
+    </h2>
+    <p class="section-intro">Squash is a Cursor-like interface for Product Managers. Ask anything — from "cluster last week's tickets" to "draft the PRD for the refund retry flow" — and Squash does the work across every tool you already use.</p>
+
+    <div class="solution-grid">
+      <!-- Pillar 1: Synthesize -->
+      <article class="card card-tertiary">
+        <div class="solution-meta"><span class="idx">01</span><span class="eyebrow">Synthesize</span></div>
+        <h3 class="solution-title">Read every ticket. Surface the pattern.</h3>
+        <p class="solution-body">Squash processes your entire support inbox, session recordings, and NPS data — and tells you the top three things hurting retention this week, with every claim traced to the source.</p>
+        <div class="solution-visual">
+          <div class="ticket-row"><span class="label">Checkout crash on Android 14</span><span class="count">142</span><span class="bar"><i style="width:85%"></i></span></div>
+          <div class="ticket-row"><span class="label">Promo code drops on retry</span><span class="count">78</span><span class="bar"><i style="width:48%"></i></span></div>
+          <div class="ticket-row"><span class="label">Refund stuck > 72h</span><span class="count">41</span><span class="bar"><i style="width:25%"></i></span></div>
+        </div>
+      </article>
+
+      <!-- Pillar 2: Analyze -->
+      <article class="card card-tertiary">
+        <div class="solution-meta"><span class="idx">02</span><span class="eyebrow">Analyze</span></div>
+        <h3 class="solution-title">Ask your data in plain English.</h3>
+        <p class="solution-body">No more waiting on analysts. Type 'conversion by channel last 30 days, Android only' and Squash writes the SQL, runs it against BigQuery or Postgres, and hands you the chart.</p>
+        <div class="solution-visual">
+          <p class="sql-prompt">&gt; conversion by channel, last 30 days, Android only</p>
+          <div class="sql-preview">SELECT channel, COUNT(*) AS sessions,<br>AVG(converted::int) AS cvr<br>FROM events WHERE device = 'android'...</div>
+          <div class="sql-status">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            ran in 1.4s · chart ready
+          </div>
+        </div>
+      </article>
+
+      <!-- Pillar 3: Detect -->
+      <article class="card card-tertiary">
+        <div class="solution-meta"><span class="idx">03</span><span class="eyebrow">Detect</span></div>
+        <h3 class="solution-title">Bugs and friction, before they escalate.</h3>
+        <p class="solution-body">Squash watches real sessions and flags regressions, rage clicks, and dead ends the moment they appear. Your team gets a Slack ping — not a Monday-morning fire drill.</p>
+        <div class="solution-visual">
+          <div class="alert-row">
+            <div class="alert-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f44336" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div>
+              <div class="alert-title">Rage clicks spiking on Pay button</div>
+              <div class="alert-meta">#payments-oncall · 4 min ago · 38 sessions affected</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Pillar 4: Ship -->
+      <article class="card card-tertiary">
+        <div class="solution-meta"><span class="idx">04</span><span class="eyebrow">Ship</span></div>
+        <h3 class="solution-title">Draft PRDs grounded in real signal.</h3>
+        <p class="solution-body">Turn a synthesized insight into a PRD, user story, or competitive analysis in one click. Every spec links to the tickets and data that justify it.</p>
+        <div class="solution-visual">
+          <div class="prd-title">PRD · Android 14 payment-step crash</div>
+          <div class="prd-row"><span class="prd-dot"></span><span class="prd-label">Problem</span></div>
+          <div class="prd-row"><span class="prd-dot"></span><span class="prd-label">User impact</span></div>
+          <div class="prd-row"><span class="prd-dot"></span><span class="prd-label">Proposed fix</span></div>
+          <div class="prd-row"><span class="prd-dot"></span><span class="prd-label">Acceptance criteria</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ FEATURES ════════════════════════ -->
+<section class="section" id="features" aria-labelledby="features-heading">
+  <div class="container">
+    <p class="section-eyebrow">Capabilities</p>
+    <h2 class="section-h2" id="features-heading">
+      Everything a PM actually does,
+      <span class="muted">automated with your data.</span>
+    </h2>
+
+    <div class="features-grid">
+      <article class="card">
+        <div class="feat-head">
+          <div class="feat-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          </div>
+          <span class="feat-idx">01</span>
+        </div>
+        <h3 class="feat-title">Feedback synthesis</h3>
+        <p class="feat-body">Cluster 500 tickets into 5 themes ranked by revenue impact, churn signal, and urgency. Traces back to every source ticket.</p>
+        <p class="feat-tag">Zendesk · Intercom · Salesforce</p>
+      </article>
+
+      <article class="card">
+        <div class="feat-head">
+          <div class="feat-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <span class="feat-idx">02</span>
+        </div>
+        <h3 class="feat-title">Natural-language analytics</h3>
+        <p class="feat-body">Ask questions, get charts. Squash runs SQL against your warehouse, builds funnels in Mixpanel, and summarizes the result.</p>
+        <p class="feat-tag">BigQuery · Postgres · Mixpanel · PostHog</p>
+      </article>
+
+      <article class="card">
+        <div class="feat-head">
+          <div class="feat-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <span class="feat-idx">03</span>
+        </div>
+        <h3 class="feat-title">Session intelligence</h3>
+        <p class="feat-body">Automatic detection of rage clicks, dead ends, and user-reported bugs in real sessions. Slack and email alerts the same hour.</p>
+        <p class="feat-tag">Session replay · Anomaly detection</p>
+      </article>
+
+      <article class="card">
+        <div class="feat-head">
+          <div class="feat-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+          </div>
+          <span class="feat-idx">04</span>
+        </div>
+        <h3 class="feat-title">PRD + spec drafting</h3>
+        <p class="feat-body">Generate PRDs, user stories, acceptance criteria, and competitive teardowns grounded in your product context.</p>
+        <p class="feat-tag">Notion · Confluence · Google Docs</p>
+      </article>
+
+      <article class="card">
+        <div class="feat-head">
+          <div class="feat-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <span class="feat-idx">05</span>
+        </div>
+        <h3 class="feat-title">Action layer</h3>
+        <p class="feat-body">Squash doesn't just suggest — it files the Jira, updates the Linear cycle, schedules the sync, and drafts the customer email.</p>
+        <p class="feat-tag">Jira · Linear · Gmail · Slack</p>
+      </article>
+
+      <article class="card">
+        <div class="feat-head">
+          <div class="feat-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <span class="feat-idx">06</span>
+        </div>
+        <h3 class="feat-title">Grounded citations</h3>
+        <p class="feat-body">Every answer cites the source: ticket #, session ID, SQL query, Notion doc. Investors and execs can audit your decisions.</p>
+        <p class="feat-tag">Trust · Auditability</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ HOW IT WORKS ════════════════════════ -->
+<section class="section how" id="how-it-works" aria-labelledby="how-heading">
+  <div class="container">
+    <p class="section-eyebrow">How it works</p>
+    <h2 class="section-h2" id="how-heading">
+      From zero to your first insight
+      <span class="muted">in under ten minutes.</span>
+    </h2>
+
+    <ol class="how-list">
+      <li>
+        <div class="how-step-num">01</div>
+        <h3 class="how-step-title">Connect your stack</h3>
+        <p class="how-step-body">OAuth into your tickets, analytics warehouse, session replay, and docs. Squash respects least-privilege scopes — read-only by default.</p>
+      </li>
+      <li>
+        <div class="how-step-num">02</div>
+        <h3 class="how-step-title">Ask in plain English</h3>
+        <p class="how-step-body">One chat interface across your entire product stack. 'Why is Android conversion down?' or 'Draft a PRD for the refund retry flow.' Squash handles the rest.</p>
+      </li>
+      <li>
+        <div class="how-step-num">03</div>
+        <h3 class="how-step-title">Ship with confidence</h3>
+        <p class="how-step-body">Get synthesized insights, charts, and drafts — grounded in real user signal. File the Jira, schedule the review, move the roadmap.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ════════════════════════ USE CASES ════════════════════════ -->
+<section class="section" id="use-cases" aria-labelledby="uc-heading">
+  <div class="container">
+    <p class="section-eyebrow">Use cases</p>
+    <h2 class="section-h2" id="uc-heading">
+      Built for every decision maker
+      <span class="muted">across the product org.</span>
+    </h2>
+
+    <div class="uc-grid">
+      <article class="card">
+        <p class="uc-persona">For PMs</p>
+        <h3 class="uc-title">Weekly synthesis in 10 minutes</h3>
+        <p class="uc-body">Monday morning: 'What are the top three pain points from last week's tickets?' Squash returns a ranked list, with ticket links and a draft Slack update for the team.</p>
+      </article>
+      <article class="card">
+        <p class="uc-persona">For Heads of Product</p>
+        <h3 class="uc-title">Investor-ready roadmap updates</h3>
+        <p class="uc-body">Pull the evidence behind every bet in your roadmap. Every feature links to the tickets, queries, and sessions that justified it.</p>
+      </article>
+      <article class="card">
+        <p class="uc-persona">For Founders</p>
+        <h3 class="uc-title">Your first analyst, product ops, and researcher</h3>
+        <p class="uc-body">Pre-series-A teams use Squash instead of hiring three specialists. Ask once, get the SQL, the chart, the synthesis, and the follow-up ticket.</p>
+      </article>
+      <article class="card">
+        <p class="uc-persona">For Product Ops</p>
+        <h3 class="uc-title">Close the loop on every feature request</h3>
+        <p class="uc-body">When Squash ships a feature from a ticket cluster, it auto-drafts the 'we heard you' email to every customer in the cluster.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ INTEGRATIONS ════════════════════════ -->
+<section class="section integrations" id="integrations" aria-labelledby="int-heading">
+  <div class="container">
+    <p class="section-eyebrow">Integrations</p>
+    <h2 class="section-h2" id="int-heading">Plugs into every tool a PM already lives in.</h2>
+    <p class="section-intro">Connect once. Squash pulls signal, writes back decisions, and keeps your system of record clean — Jira stays Jira, Notion stays Notion.</p>
+  </div>
+
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marquee-track"></div>
+  </div>
+
+  <div class="container">
+    <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════ TESTIMONIALS ════════════════════════ -->
+<section class="section" aria-label="Customer quotes">
+  <div class="container">
+    <p class="section-eyebrow">What teams say</p>
+    <h2 class="section-h2">
+      The feedback loop
+      <span class="muted">you always wanted.</span>
+    </h2>
+
+    <div class="tm-grid">
+      <figure class="card">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="tm-quote-icon" aria-hidden="true"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+        <blockquote class="tm-body">&ldquo;I used to spend Monday mornings reading Zendesk. Now Squash has already done it and my standup starts with 'here's what users said last week, ranked by revenue impact.'&rdquo;</blockquote>
+        <figcaption class="tm-foot">
+          <div class="tm-name">PM, Series B SaaS</div>
+          <div class="tm-role">Product Manager</div>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="tm-quote-icon" aria-hidden="true"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+        <blockquote class="tm-body">&ldquo;We killed a data analyst hire. Not because we didn't value the work — because a PM can now ask the question in English and ship the chart in the same meeting.&rdquo;</blockquote>
+        <figcaption class="tm-foot">
+          <div class="tm-name">Head of Product, fintech</div>
+          <div class="tm-role">Head of Product</div>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="tm-quote-icon" aria-hidden="true"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+        <blockquote class="tm-body">&ldquo;The first time Squash filed a Jira for a bug I didn't know existed — synthesized from 14 tickets and 6 sessions — I stopped second-guessing what to build.&rdquo;</blockquote>
+        <figcaption class="tm-foot">
+          <div class="tm-name">Founding PM, consumer mobile</div>
+          <div class="tm-role">Founding PM</div>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ FAQ ════════════════════════ -->
+<section class="section faq" id="faq" aria-labelledby="faq-heading">
+  <div class="container faq-inner">
+    <p class="section-eyebrow">FAQ</p>
+    <h2 class="section-h2" id="faq-heading">Questions, answered.</h2>
+
+    <div class="faq-list" id="faq-list"></div>
+
+    <p class="faq-footer">Still have questions? <a href="mailto:hello@squash.ai">hello@squash.ai</a></p>
+  </div>
+</section>
+
+<!-- ════════════════════════ FINAL CTA ════════════════════════ -->
+<section class="final">
+  <div class="final-dots" aria-hidden="true"></div>
+  <div class="final-inner">
+    <h2 class="final-h2">
+      Your next decision deserves<br>
+      <span class="italic">better than a gut feel.</span>
+    </h2>
+    <p class="final-body">Connect one tool, ask one question, get one answer. That's how every Squash journey starts. No credit card, no consultant kickoff call.</p>
+    <div class="final-ctas">
+      <a href="/signup" class="btn-primary orange">
+        Start free
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="/demo" class="btn-secondary">Book a demo</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ FOOTER ════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="/">
+          <span class="logo-mark">S</span>
+          <span class="logo-word">Squash</span>
+        </a>
+        <p class="footer-brand-body">The AI decision layer for Product Managers. Stop building on gut. Ship what users actually want.</p>
+        <div class="footer-social">
+          <a href="https://twitter.com/squash" aria-label="Squash on Twitter">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://linkedin.com/company/squash" aria-label="Squash on LinkedIn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://github.com/squash" aria-label="Squash on GitHub">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h3 class="footer-col-title">Product</h3>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#integrations">Integrations</a></li>
+            <li><a href="#use-cases">Use cases</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/changelog">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-col-title">Company</h3>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/careers">Careers</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="mailto:hello@squash.ai">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-col-title">Resources</h3>
+          <ul>
+            <li><a href="/docs">Documentation</a></li>
+            <li><a href="/docs/api">API reference</a></li>
+            <li><a href="/customers">Customer stories</a></li>
+            <li><a href="/security">Security</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-col-title">Legal</h3>
+          <ul>
+            <li><a href="/privacy">Privacy</a></li>
+            <li><a href="/terms">Terms</a></li>
+            <li><a href="/dpa">DPA</a></li>
+            <li><a href="/security#soc2">SOC 2</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-base">
+      <p>© 2026 Squash, Inc. All rights reserved.</p>
+      <p>Built for Product Managers who ship.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ────────── HEADER SCROLL EFFECT ──────────
+  const header = document.getElementById('header');
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 20);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ────────── INTEGRATION DATA ──────────
+  const INTEGRATIONS = [
+    { name: "Mixpanel", category: "Analytics", color: "#7856FF" },
+    { name: "PostHog", category: "Analytics", color: "#1D4AFF" },
+    { name: "Google Analytics", category: "Analytics", color: "#E37400" },
+    { name: "Zendesk", category: "Support", color: "#03363D" },
+    { name: "Intercom", category: "Support", color: "#1F8DED" },
+    { name: "Salesforce", category: "CRM", color: "#00A1E0" },
+    { name: "Jira", category: "Issues", color: "#0052CC" },
+    { name: "Linear", category: "Issues", color: "#5E6AD2" },
+    { name: "Notion", category: "Docs", color: "#191919" },
+    { name: "Confluence", category: "Docs", color: "#0052CC" },
+    { name: "Slack", category: "Comms", color: "#4A154B" },
+    { name: "Gmail", category: "Comms", color: "#EA4335" },
+    { name: "Google Calendar", category: "Comms", color: "#4285F4" },
+    { name: "Google Docs", category: "Docs", color: "#1A73E8" },
+    { name: "Google Sheets", category: "Data", color: "#0F9D58" },
+    { name: "Google Drive", category: "Docs", color: "#4285F4" },
+    { name: "BigQuery", category: "Data", color: "#4285F4" },
+    { name: "PostgreSQL", category: "Data", color: "#336791" },
+    { name: "Metabase", category: "Data", color: "#509EE3" },
+    { name: "Firecrawl", category: "Research", color: "#FF6B35" },
+    { name: "Granola", category: "Meetings", color: "#F4A340" },
+    { name: "SigNoz", category: "Observability", color: "#E75B36" },
+    { name: "OpenAI", category: "Model", color: "#10A37F" },
+    { name: "Anthropic", category: "Model", color: "#D97706" }
+  ];
+
+  // ────────── MARQUEE ──────────
+  const track = document.getElementById('marquee-track');
+  const marqueeHtml = [...INTEGRATIONS, ...INTEGRATIONS].map(i => `
+    <div class="chip">
+      <span class="chip-mark" style="background:${i.color}">${i.name[0]}</span>
+      <span class="chip-name">${i.name}</span>
+    </div>
+  `).join('');
+  track.innerHTML = marqueeHtml;
+
+  // ────────── CATEGORY GRID ──────────
+  const byCategory = INTEGRATIONS.reduce((acc, item) => {
+    (acc[item.category] = acc[item.category] || []).push(item);
+    return acc;
+  }, {});
+  const catGrid = document.getElementById('cat-grid');
+  catGrid.innerHTML = Object.entries(byCategory).map(([cat, items]) => `
+    <div>
+      <h3 class="cat-title">${cat}</h3>
+      <ul class="cat-list">
+        ${items.map(i => `
+          <li class="cat-item">
+            <span class="cat-mark" style="background:${i.color}">${i.name[0]}</span>
+            <span>${i.name}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  `).join('');
+
+  // ────────── FAQ ──────────
+  const FAQS = [
+    { q: "What is Squash?", a: "Squash is an AI decision-making interface built for Product Managers. It connects to your tools — tickets, session replays, analytics warehouses, and docs — and synthesizes them into prioritized insights, charts, PRDs, and specs on demand." },
+    { q: "Who is Squash for?", a: "Squash is built for Product Managers, Heads of Product, and product decision makers at SaaS and consumer tech companies. Product Ops and early-stage founders who wear the PM hat also use it to move faster without hiring analysts or research teams." },
+    { q: "How does Squash replace data analysts and product ops?", a: "Squash runs SQL against your warehouse, builds charts, and synthesizes support tickets in minutes — work that previously required a data analyst or a product ops team. PMs ask in plain English; Squash writes the query, builds the visualization, and summarizes the signal." },
+    { q: "What tools does Squash integrate with?", a: "Squash integrates with 24+ tools including Jira, Linear, Zendesk, Intercom, Salesforce, Mixpanel, PostHog, Google Analytics, BigQuery, PostgreSQL, Metabase, Notion, Confluence, Slack, Gmail, Google Calendar, Google Docs, Google Drive, Firecrawl, Granola, and SigNoz. You can also bring your own OpenAI or Anthropic API keys." },
+    { q: "How is Squash different from ChatGPT or Claude?", a: "General-purpose AI doesn't know your users. Squash is grounded in your product context — your tickets, your sessions, your data warehouse, your Jira backlog. Answers cite real tickets, real users, and real queries, not generic patterns." },
+    { q: "Does Squash write PRDs and specs?", a: "Yes. Squash drafts PRDs, user stories, feature specs, and competitive analyses grounded in your actual product context and user feedback. Every claim links back to the source ticket, session, or data query." },
+    { q: "Is my data secure?", a: "Squash is SOC 2 Type II compliant. Your data stays in your workspace — we never train models on your data, and all integrations use least-privilege OAuth scopes with read-only access by default." },
+    { q: "How long does it take to set up?", a: "Most teams are running their first query within 10 minutes. Connect one integration, ask a question, get an answer. Full coverage across your stack typically takes a week." }
+  ];
+  const faqList = document.getElementById('faq-list');
+  faqList.innerHTML = FAQS.map((f, i) => `
+    <div class="faq-item ${i === 0 ? 'open' : ''}" data-idx="${i}">
+      <button type="button" class="faq-btn" aria-expanded="${i === 0}" aria-controls="faq-panel-${i}">
+        <h3 class="faq-q">${f.q}</h3>
+        <svg class="faq-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div id="faq-panel-${i}" class="faq-panel" role="region">
+        <div><p class="faq-a">${f.a}</p></div>
+      </div>
+    </div>
+  `).join('');
+
+  faqList.addEventListener('click', (e) => {
+    const btn = e.target.closest('.faq-btn');
+    if (!btn) return;
+    const item = btn.closest('.faq-item');
+    const open = item.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+</script>
+</body>
+</html>
