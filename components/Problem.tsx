@@ -3,22 +3,19 @@
 // it scan as testimonial-adjacent — a confidence move, not bragging.
 const PROBLEMS = [
   {
-    stat: "500",
-    unit: "tickets/week",
-    title: "The signal is there. The time isn't.",
-    body: "Every complaint, every rage quit, every feature request is already in your Zendesk and Intercom. But nobody reads all 500. Patterns that would actually move retention never make it into the planning doc.",
+    label: "The signal is right there",
+    title: "The answer is already in your tools. Nobody has time to read it.",
+    body: "Rage clicks in session recordings. Tickets naming the same bug. Feature requests from accounts about to churn. The signal is right there, just sitting in tools and never pulled into a single conversation.",
   },
   {
-    stat: "2 wks",
-    unit: "wait on the analyst",
-    title: "The dashboard you asked for ships after the decision.",
-    body: "Product Managers file a data request, the analyst writes SQL, the chart lands a week later. By then you've already shipped on vibes. The rest of the org builds its own private dashboards, and nobody agrees on the numbers.",
+    label: "Scattered context",
+    title: "Your product context is scattered across your stack.",
+    body: "Session replays in PostHog. Tickets in Zendesk. ARR in Salesforce. Experiments in Mixpanel. Specs in Notion. The story that should decide your roadmap lives in the seams between them, and nobody keeps seven tabs open to piece it together.",
   },
   {
-    stat: "3",
-    unit: "hires per team",
-    title: "Analysts, researchers, product ops — all billing for glue work.",
-    body: "Orgs staff up entire functions just to turn raw signal into decisions. Most of that work is synthesis the LLM era should have collapsed by now. Budget-constrained teams just… skip it.",
+    label: "Waiting on the analyst",
+    title: "Every chart waits on the analyst. Every RCA waits on you.",
+    body: "Need conversion cut by platform? File a request, wait a week for SQL. Need to know why a metric moved? Block your afternoon, start clicking through dashboards and session replays. The decision ships on gut before the evidence catches up.",
   },
 ];
 
@@ -50,16 +47,11 @@ export function Problem() {
               key={p.title}
               className="card-hover p-7 rounded-xl bg-[color:var(--color-surface)] border border-[color:var(--color-border)]"
             >
-              <div className="flex items-baseline gap-2">
-                <span
-                  className="text-[44px] leading-none text-[color:var(--color-primary)]"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  {p.stat}
-                </span>
-                <span className="text-[12px] text-[color:var(--color-foreground-muted)]">
-                  {p.unit}
-                </span>
+              <div
+                className="text-[32px] leading-none text-[color:var(--color-primary)]"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {p.label}
               </div>
               <h3 className="mt-5 text-[17px] font-semibold text-[color:var(--color-foreground)] leading-snug">
                 {p.title}

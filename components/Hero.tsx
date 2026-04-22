@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChatMock } from "./ui/ChatMock";
+import { ChatMockAnimated } from "./ui/ChatMockAnimated";
 
 // Hero — the primary conversion surface.
 // Copy strategy:
@@ -12,23 +12,12 @@ export function Hero() {
     <section className="relative overflow-hidden hero-gradient">
       <div className="absolute inset-0 grid-bg pointer-events-none" aria-hidden="true" />
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-16 md:pt-24 pb-16 md:pb-24">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-8 md:pt-10 pb-10 md:pb-12 lg:min-h-[calc(100svh-4rem)]">
+        <div className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-start w-full lg:pt-2">
           {/* Text column */}
-          <div className="lg:col-span-6 flex flex-col items-start">
-            <div
-              className="fade-up inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[color:var(--color-border)] text-[11px] font-medium text-[color:var(--color-foreground-secondary)]"
-              style={{ animationDelay: "0ms" }}
-            >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[color:var(--color-primary)] opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[color:var(--color-primary)]" />
-              </span>
-              New · Squash 1.0 is live for early access teams
-            </div>
-
+          <div className="lg:col-span-6 flex flex-col items-start lg:mt-[6svh] xl:mt-[8svh]">
             <h1
-              className="fade-up mt-6 text-[44px] sm:text-[56px] lg:text-[64px] leading-[1.02] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+              className="fade-up text-[38px] sm:text-[48px] lg:text-[48px] xl:text-[56px] 2xl:text-[60px] leading-[1.05] tracking-[-0.02em] text-[color:var(--color-foreground)]"
               style={{
                 fontFamily: "var(--font-display)",
                 animationDelay: "80ms",
@@ -42,24 +31,23 @@ export function Hero() {
             </h1>
 
             <p
-              className="fade-up mt-5 text-[17px] lg:text-[18px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-xl"
+              className="fade-up mt-4 text-[16px] lg:text-[17px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-xl"
               style={{ animationDelay: "180ms" }}
             >
-              Squash is the AI decision layer for Product Managers. It reads your
-              tickets, session recordings, and analytics — then hands you a
-              prioritized roadmap, cited to real users. Ask anything across your
-              stack in plain English.
+              Your sharpest PM teammate, wired into analytics, sessions,
+              tickets, and your backlog. Ask anything, get the assistance of
+              someone who's read everything.
             </p>
 
             <div
-              className="fade-up mt-8 flex flex-col sm:flex-row gap-3"
+              className="fade-up mt-6 flex flex-col sm:flex-row gap-3"
               style={{ animationDelay: "280ms" }}
             >
               <Link
                 href="/signup"
                 className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full bg-[color:var(--color-primary)] text-white font-medium text-sm hover:bg-[color:var(--color-primary-hover)] transition-colors"
               >
-                Start free — no credit card
+                Get started for free
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -74,26 +62,20 @@ export function Hero() {
             </div>
 
             <div
-              className="fade-up mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[12px] text-[color:var(--color-foreground-muted)]"
+              className="fade-up mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] text-[color:var(--color-foreground-muted)]"
               style={{ animationDelay: "380ms" }}
             >
               <span className="inline-flex items-center gap-1.5">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[color:var(--color-success)]" aria-hidden="true">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-                SOC 2 Type II
+                Setup in minutes, not weeks
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[color:var(--color-success)]" aria-hidden="true">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-                Your data never trains our models
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[color:var(--color-success)]" aria-hidden="true">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                10-minute setup
+                Connect your stack in a few clicks
               </span>
             </div>
           </div>
@@ -103,7 +85,7 @@ export function Hero() {
             className="lg:col-span-6 fade-up"
             style={{ animationDelay: "460ms" }}
           >
-            <ChatMock />
+            <ChatMockAnimated />
           </div>
         </div>
       </div>
