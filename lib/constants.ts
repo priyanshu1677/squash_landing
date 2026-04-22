@@ -5,39 +5,41 @@
 
 export const NAV_LINKS = [
   { label: "Product", href: "#solution" },
-  { label: "How it works", href: "#how-it-works" },
   { label: "Use cases", href: "#use-cases" },
+  { label: "How it works", href: "#how-it-works" },
   { label: "Integrations", href: "#integrations" },
   { label: "FAQ", href: "#faq" },
 ];
 
 // Every integration shown in the Squash product (per the screenshot).
 // Grouped by category so we can render labeled sections if needed.
+// `slug` matches a Simple Icons brand slug (https://simpleicons.org/) when
+// available; falsy means we fall back to a colored letter monogram.
 export const INTEGRATIONS = [
-  { name: "Mixpanel", category: "Analytics", color: "#7856FF" },
-  { name: "PostHog", category: "Analytics", color: "#1D4AFF" },
-  { name: "Google Analytics", category: "Analytics", color: "#E37400" },
-  { name: "Zendesk", category: "Support", color: "#03363D" },
-  { name: "Intercom", category: "Support", color: "#1F8DED" },
-  { name: "Salesforce", category: "CRM", color: "#00A1E0" },
-  { name: "Jira", category: "Issues", color: "#0052CC" },
-  { name: "Linear", category: "Issues", color: "#5E6AD2" },
-  { name: "Notion", category: "Docs", color: "#191919" },
-  { name: "Confluence", category: "Docs", color: "#0052CC" },
-  { name: "Slack", category: "Comms", color: "#4A154B" },
-  { name: "Gmail", category: "Comms", color: "#EA4335" },
-  { name: "Google Calendar", category: "Comms", color: "#4285F4" },
-  { name: "Google Docs", category: "Docs", color: "#1A73E8" },
-  { name: "Google Sheets", category: "Data", color: "#0F9D58" },
-  { name: "Google Drive", category: "Docs", color: "#4285F4" },
-  { name: "BigQuery", category: "Data", color: "#4285F4" },
-  { name: "PostgreSQL", category: "Data", color: "#336791" },
-  { name: "Metabase", category: "Data", color: "#509EE3" },
-  { name: "Firecrawl", category: "Research", color: "#FF6B35" },
-  { name: "Granola", category: "Meetings", color: "#F4A340" },
-  { name: "SigNoz", category: "Observability", color: "#E75B36" },
-  { name: "OpenAI", category: "Model", color: "#10A37F" },
-  { name: "Anthropic", category: "Model", color: "#D97706" },
+  { name: "Mixpanel", category: "Analytics", color: "#7856FF", slug: "mixpanel" },
+  { name: "PostHog", category: "Analytics", color: "#1D4AFF", slug: "posthog" },
+  { name: "Google Analytics", category: "Analytics", color: "#E37400", slug: "googleanalytics" },
+  { name: "Zendesk", category: "Support", color: "#03363D", slug: "zendesk" },
+  { name: "Intercom", category: "Support", color: "#1F8DED", slug: "intercom" },
+  { name: "Salesforce", category: "CRM", color: "#00A1E0", slug: "salesforce" },
+  { name: "Jira", category: "Issues", color: "#0052CC", slug: "jira" },
+  { name: "Linear", category: "Issues", color: "#5E6AD2", slug: "linear" },
+  { name: "Notion", category: "Docs", color: "#191919", slug: "notion" },
+  { name: "Confluence", category: "Docs", color: "#0052CC", slug: "confluence" },
+  { name: "Slack", category: "Comms", color: "#4A154B", slug: "slack" },
+  { name: "Gmail", category: "Comms", color: "#EA4335", slug: "gmail" },
+  { name: "Google Calendar", category: "Comms", color: "#4285F4", slug: "googlecalendar" },
+  { name: "Google Docs", category: "Docs", color: "#1A73E8", slug: "googledocs" },
+  { name: "Google Sheets", category: "Data", color: "#0F9D58", slug: "googlesheets" },
+  { name: "Google Drive", category: "Docs", color: "#4285F4", slug: "googledrive" },
+  { name: "BigQuery", category: "Data", color: "#4285F4", slug: "googlebigquery" },
+  { name: "PostgreSQL", category: "Data", color: "#336791", slug: "postgresql" },
+  { name: "Metabase", category: "Data", color: "#509EE3", slug: "metabase" },
+  { name: "Firecrawl", category: "Research", color: "#FF6B35", slug: "firecrawl" },
+  { name: "Granola", category: "Meetings", color: "#F4A340", slug: "granola" },
+  { name: "SigNoz", category: "Observability", color: "#E75B36", slug: "signoz" },
+  { name: "OpenAI", category: "Model", color: "#10A37F", slug: "openai" },
+  { name: "Anthropic", category: "Model", color: "#D97706", slug: "anthropic" },
 ];
 
 // Four pillars — map to the solution bullets in the brief.
@@ -45,25 +47,25 @@ export const SOLUTION_PILLARS = [
   {
     eyebrow: "Synthesize",
     title: "Read every ticket. Surface the pattern.",
-    body: "Squash processes your entire support inbox, session recordings, and NPS data — and tells you the top three things hurting retention this week, with every claim traced to the source.",
+    body: "Squash processes your entire support inbox, session recordings, and NPS data, then tells you the top insights about your users. Every claim traces back to the source.",
     href: "#feature-synthesize",
   },
   {
     eyebrow: "Analyze",
     title: "Ask your data in plain English.",
-    body: "No more waiting on analysts. Type 'conversion by channel last 30 days, Android only' and Squash writes the SQL, runs it against BigQuery or Postgres, and hands you the chart.",
+    body: "No more waiting on analysts. Ask metric or pattern that you want to check and Squash writes the SQL, runs it against your data warehouse tool, and hands you with visually interactive charts and graphs.",
     href: "#feature-analyze",
   },
   {
     eyebrow: "Detect",
     title: "Bugs and friction, before they escalate.",
-    body: "Squash watches real sessions and flags regressions, rage clicks, and dead ends the moment they appear. Your team gets a Slack ping — not a Monday-morning fire drill.",
+    body: "Squash watches real sessions and flags regressions, rage clicks, and dead ends the moment they appear. Your team gets a Slack ping instead of a Monday-morning fire drill.",
     href: "#feature-detect",
   },
   {
     eyebrow: "Ship",
-    title: "Draft PRDs grounded in real signal.",
-    body: "Turn a synthesized insight into a PRD, user story, or competitive analysis in one click. Every spec links to the tickets and data that justify it.",
+    title: "Draft PRDs and tickets grounded in real signal.",
+    body: "Create context aware PRDs, one-pagers and jira tickets that feels like human. Every spec links to the tickets and data that justify it.",
     href: "#feature-ship",
   },
 ];
@@ -71,7 +73,7 @@ export const SOLUTION_PILLARS = [
 export const FEATURES = [
   {
     title: "Feedback synthesis",
-    body: "Cluster 500 tickets into 5 themes ranked by revenue impact, churn signal, and urgency. Traces back to every source ticket.",
+    body: "Cluster 500 tickets into 5 themes, ranked by what's actually hurting revenue and retention. Every theme traces back to the source tickets.",
     tag: "Zendesk · Intercom · Salesforce",
   },
   {
@@ -91,11 +93,11 @@ export const FEATURES = [
   },
   {
     title: "Action layer",
-    body: "Squash doesn't just suggest — it files the Jira, updates the Linear cycle, schedules the sync, and drafts the customer email.",
+    body: "Squash files the Jira, updates the Linear cycle, schedules the sync, and drafts the customer email. Not suggestions, actual work.",
     tag: "Jira · Linear · Gmail · Slack",
   },
   {
-    title: "Grounded citations",
+    title: "Source-cited answers",
     body: "Every answer cites the source: ticket #, session ID, SQL query, Notion doc. Investors and execs can audit your decisions.",
     tag: "Trust · Auditability",
   },
@@ -105,17 +107,17 @@ export const HOW_IT_WORKS = [
   {
     step: "01",
     title: "Connect your stack",
-    body: "OAuth into your tickets, analytics warehouse, session replay, and docs. Squash respects least-privilege scopes — read-only by default.",
+    body: "OAuth into your tickets, analytics warehouse, session replay, and docs. Squash uses least-privilege scopes and is read-only by default.",
   },
   {
     step: "02",
-    title: "Ask in plain English",
+    title: "Ask like you're talking to a teammate",
     body: "One chat interface across your entire product stack. 'Why is Android conversion down?' or 'Draft a PRD for the refund retry flow.' Squash handles the rest.",
   },
   {
     step: "03",
     title: "Ship with confidence",
-    body: "Get synthesized insights, charts, and drafts — grounded in real user signal. File the Jira, schedule the review, move the roadmap.",
+    body: "Get the insight, chart, or draft you need, backed by actual user signal. File the Jira, schedule the review, move the roadmap.",
   },
 ];
 
@@ -138,14 +140,14 @@ export const USE_CASES = [
   {
     persona: "For Product Ops",
     title: "Close the loop on every feature request",
-    body: "When Squash ships a feature from a ticket cluster, it auto-drafts the 'we heard you' email to every customer in the cluster.",
+    body: "When Squash ships a feature from a ticket cluster, it auto-drafts the follow-up email to every customer in the cluster.",
   },
 ];
 
 export const FAQS = [
   {
     q: "What is Squash?",
-    a: "Squash is an AI decision-making interface built for Product Managers. It connects to your tools — tickets, session replays, analytics warehouses, and docs — and synthesizes them into prioritized insights, charts, PRDs, and specs on demand.",
+    a: "Squash is a decision-making interface built for Product Managers. It connects to your tools (tickets, session replays, analytics warehouses, docs) and turns them into prioritized insights, charts, PRDs, and specs on demand.",
   },
   {
     q: "Who is Squash for?",
@@ -153,7 +155,7 @@ export const FAQS = [
   },
   {
     q: "How does Squash replace data analysts and product ops?",
-    a: "Squash runs SQL against your warehouse, builds charts, and synthesizes support tickets in minutes — work that previously required a data analyst or a product ops team. PMs ask in plain English; Squash writes the query, builds the visualization, and summarizes the signal.",
+    a: "Squash runs SQL against your warehouse, builds charts, and clusters support tickets in minutes. That's work that previously required a data analyst or a product ops team. PMs ask in plain English; Squash writes the query, builds the visualization, and summarizes the result.",
   },
   {
     q: "What tools does Squash integrate with?",
@@ -161,15 +163,15 @@ export const FAQS = [
   },
   {
     q: "How is Squash different from ChatGPT or Claude?",
-    a: "General-purpose AI doesn't know your users. Squash is grounded in your product context — your tickets, your sessions, your data warehouse, your Jira backlog. Answers cite real tickets, real users, and real queries, not generic patterns.",
+    a: "General-purpose AI doesn't know your users. Squash works inside your product context: your tickets, your sessions, your data warehouse, your Jira backlog. Answers cite real tickets, real users, and real queries, not generic patterns.",
   },
   {
     q: "Does Squash write PRDs and specs?",
-    a: "Yes. Squash drafts PRDs, user stories, feature specs, and competitive analyses grounded in your actual product context and user feedback. Every claim links back to the source ticket, session, or data query.",
+    a: "Yes. Squash drafts PRDs, user stories, feature specs, and competitive analyses based on your actual product context and user feedback. Every claim links back to the source ticket, session, or data query.",
   },
   {
     q: "Is my data secure?",
-    a: "Squash is SOC 2 Type II compliant. Your data stays in your workspace — we never train models on your data, and all integrations use least-privilege OAuth scopes with read-only access by default.",
+    a: "Your data stays in your workspace. We never train models on your data, and all integrations use least-privilege OAuth scopes with read-only access by default.",
   },
   {
     q: "How long does it take to set up?",

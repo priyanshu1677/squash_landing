@@ -36,7 +36,6 @@ const FOOTER_COLUMNS = [
       { label: "Privacy", href: "/privacy" },
       { label: "Terms", href: "/terms" },
       { label: "DPA", href: "/dpa" },
-      { label: "SOC 2", href: "/security#soc2" },
     ],
   },
 ];
@@ -50,7 +49,7 @@ export function Footer() {
           <div className="lg:col-span-4">
             <Logo />
             <p className="mt-4 text-[14px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-xs">
-              The AI decision layer for Product Managers. Stop building on gut.
+              The decision layer for Product Managers. Stop building on gut.
               Ship what users actually want.
             </p>
             <div className="mt-5 flex gap-3">

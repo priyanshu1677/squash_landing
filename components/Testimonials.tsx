@@ -8,12 +8,12 @@ const QUOTES = [
     role: "Product Manager",
   },
   {
-    body: "We killed a data analyst hire. Not because we didn't value the work — because a PM can now ask the question in English and ship the chart in the same meeting.",
+    body: "We killed a data analyst hire. Not because we didn't value the work, but because a PM can now ask the question in English and ship the chart in the same meeting.",
     name: "Head of Product, fintech",
     role: "Head of Product",
   },
   {
-    body: "The first time Squash filed a Jira for a bug I didn't know existed — synthesized from 14 tickets and 6 sessions — I stopped second-guessing what to build.",
+    body: "The first time Squash filed a Jira for a bug I didn't know existed, pulled from 14 tickets and 6 sessions, I stopped second-guessing what to build.",
     name: "Founding PM, consumer mobile",
     role: "Founding PM",
   },
