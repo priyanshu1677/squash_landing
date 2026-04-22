@@ -172,16 +172,16 @@ export function ChatMockAnimated() {
             <span className="w-2.5 h-2.5 rounded-full bg-[#ffc107]/60" />
             <span className="w-2.5 h-2.5 rounded-full bg-[#4caf50]/60" />
           </div>
-          <span className="text-[11px] font-mono text-[color:var(--color-foreground-muted)]">
+          <span className="text-[10px] sm:text-[11px] font-mono text-[color:var(--color-foreground-muted)] truncate max-w-[60%]">
             {useCase.sessionPath}
           </span>
-          <div className="w-10" />
+          <div className="w-8 sm:w-10" />
         </div>
 
-        <div className="p-5 sm:p-6 flex flex-col gap-4">
+        <div className="p-3.5 sm:p-5 md:p-6 flex flex-col gap-3.5 sm:gap-4">
           {/* Prompt row — right-aligned bubble, mirroring the real chat UI */}
           <div className="flex justify-end min-h-[60px]">
-            <div className="max-w-[85%] bg-[color:var(--color-background-secondary)] border border-[color:var(--color-border)] rounded-2xl rounded-tr-md px-4 py-2.5 text-[13px] leading-relaxed text-[color:var(--color-foreground)] whitespace-pre-wrap text-left">
+            <div className="max-w-[90%] sm:max-w-[85%] bg-[color:var(--color-background-secondary)] border border-[color:var(--color-border)] rounded-2xl rounded-tr-md px-3.5 sm:px-4 py-2.5 text-[12.5px] sm:text-[13px] leading-relaxed text-[color:var(--color-foreground)] whitespace-pre-wrap text-left break-words">
               {useCase.prompt.slice(0, charCount)}
               {show.prompt && (
                 <span className="caret inline-block w-[2px] h-[14px] bg-[color:var(--color-primary)] align-middle ml-0.5" />
@@ -274,21 +274,21 @@ export function ChatMockAnimated() {
           </div>
 
           {/* Metric tiles */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
             {useCase.metrics.map((m, i) => (
               <div
                 key={`${useCase.id}-metric-${m.label}`}
-                className="border border-[color:var(--color-border)] rounded-lg p-2.5"
+                className="border border-[color:var(--color-border)] rounded-lg p-2 sm:p-2.5"
                 style={{
                   opacity: show.metrics ? 1 : 0,
                   transform: show.metrics ? "translateY(0)" : "translateY(6px)",
                   transition: `opacity 400ms ease ${i * 80}ms, transform 400ms cubic-bezier(0.16, 1, 0.3, 1) ${i * 80}ms`,
                 }}
               >
-                <p className="text-[9px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground-muted)]">
+                <p className="text-[9px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground-muted)] truncate">
                   {m.label}
                 </p>
-                <p className="mt-1 text-[18px] font-semibold text-[color:var(--color-foreground)]">
+                <p className="mt-1 text-[16px] sm:text-[18px] font-semibold text-[color:var(--color-foreground)]">
                   {m.value}
                 </p>
                 <p

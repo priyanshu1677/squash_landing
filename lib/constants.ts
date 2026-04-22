@@ -147,34 +147,34 @@ export const USE_CASES = [
 export const FAQS = [
   {
     q: "What is Squash?",
-    a: "Squash is a decision-making interface built for Product Managers. It connects to your tools (tickets, session replays, analytics warehouses, docs) and turns them into prioritized insights, charts, PRDs, and specs on demand.",
+    a: "Squash is an AI product autopilot for PM teams. It connects to your tickets, session replays, analytics, docs, and CRM to turn scattered product signals into prioritized insights, charts, PRDs, and specs.",
   },
   {
     q: "Who is Squash for?",
-    a: "Squash is built for Product Managers, Heads of Product, and product decision makers at SaaS and consumer tech companies. Product Ops and early-stage founders who wear the PM hat also use it to move faster without hiring analysts or research teams.",
-  },
-  {
-    q: "How does Squash replace data analysts and product ops?",
-    a: "Squash runs SQL against your warehouse, builds charts, and clusters support tickets in minutes. That's work that previously required a data analyst or a product ops team. PMs ask in plain English; Squash writes the query, builds the visualization, and summarizes the result.",
-  },
-  {
-    q: "What tools does Squash integrate with?",
-    a: "Squash integrates with 24+ tools including Jira, Linear, Zendesk, Intercom, Salesforce, Mixpanel, PostHog, Google Analytics, BigQuery, PostgreSQL, Metabase, Notion, Confluence, Slack, Gmail, Google Calendar, Google Docs, Google Drive, Firecrawl, Granola, and SigNoz. You can also bring your own OpenAI or Anthropic API keys.",
+    a: "Squash is built for Product Managers, Heads of Product, Product Ops, and founders who run product decisions. It is especially useful for teams that need faster decisions without expanding analyst headcount.",
   },
   {
     q: "How is Squash different from ChatGPT or Claude?",
-    a: "General-purpose AI doesn't know your users. Squash works inside your product context: your tickets, your sessions, your data warehouse, your Jira backlog. Answers cite real tickets, real users, and real queries, not generic patterns.",
+    a: "General-purpose AI gives generic answers unless you manually provide context. Squash is grounded in your product stack, so outputs are based on your actual tickets, sessions, and data, with traceable sources.",
   },
   {
-    q: "Does Squash write PRDs and specs?",
-    a: "Yes. Squash drafts PRDs, user stories, feature specs, and competitive analyses based on your actual product context and user feedback. Every claim links back to the source ticket, session, or data query.",
+    q: "What tools does Squash integrate with?",
+    a: "Squash integrates with 20+ tools across issue tracking, support, analytics, docs, and data warehouses, including Jira, Linear, Zendesk, Intercom, Salesforce, Mixpanel, PostHog, GA4, BigQuery, PostgreSQL, Notion, Confluence, Slack, and Google Workspace.",
   },
   {
-    q: "Is my data secure?",
-    a: "Your data stays in your workspace. We never train models on your data, and all integrations use least-privilege OAuth scopes with read-only access by default.",
+    q: "Can Squash query our data warehouse directly?",
+    a: "Yes. Squash can generate and run SQL, build visualizations, and summarize findings in plain English, so PMs can answer product questions without waiting on ad hoc analyst cycles.",
   },
   {
-    q: "How long does it take to set up?",
-    a: "Most teams are running their first query within 10 minutes. Connect one integration, ask a question, get an answer. Full coverage across your stack typically takes a week.",
+    q: "Can we bring our own model/API keys?",
+    a: "Yes. You can use your own OpenAI or Anthropic API keys if you prefer to route model usage through your existing accounts.",
+  },
+  {
+    q: "How long does setup take?",
+    a: "Most teams ask their first real question within 10 minutes. Connecting the full stack usually takes about a week, depending on how many systems you want to include.",
+  },
+  {
+    q: "What does success look like in the first 30 days?",
+    a: "Most teams use Squash to reduce time-to-insight, speed up PRD creation, and improve prioritization quality. A typical first milestone is moving from 'question asked' to decision-ready output in hours, not days.",
   },
 ];

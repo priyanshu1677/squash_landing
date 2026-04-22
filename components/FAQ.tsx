@@ -25,7 +25,7 @@ export function FAQ() {
     <section
       id="faq"
       aria-labelledby="faq-heading"
-      className="py-24 md:py-32 bg-[color:var(--color-surface)] border-y border-[color:var(--color-border)]"
+      className="py-16 sm:py-20 md:py-32 bg-[color:var(--color-background)]"
     >
       <div className="max-w-4xl mx-auto px-6 lg:px-8">
         <div className="text-center">
@@ -34,14 +34,14 @@ export function FAQ() {
           </p>
           <h2
             id="faq-heading"
-            className="mt-3 text-[36px] md:text-[48px] leading-[1.08] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+            className="mt-3 text-[30px] sm:text-[36px] md:text-[48px] leading-[1.1] tracking-[-0.02em] text-[color:var(--color-foreground)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Questions, answered.
           </h2>
         </div>
 
-        <div className="mt-12 divide-y divide-[color:var(--color-border)] border-y border-[color:var(--color-border)]">
+        <div className="mt-10 md:mt-12 divide-y divide-[color:var(--color-border)] border-y border-[color:var(--color-border)]">
           {FAQS.map((faq, i) => {
             const isOpen = open.has(i);
             return (
@@ -51,9 +51,9 @@ export function FAQ() {
                   onClick={() => toggle(i)}
                   aria-expanded={isOpen}
                   aria-controls={`faq-panel-${i}`}
-                  className="w-full flex items-center justify-between gap-4 py-4 text-left group"
+                  className="w-full flex items-center justify-between gap-3 sm:gap-4 py-4 text-left group"
                 >
-                  <h3 className="text-[16px] md:text-[18px] font-medium text-[color:var(--color-foreground)] leading-snug">
+                  <h3 className="text-[15px] sm:text-[16px] md:text-[18px] font-medium text-[color:var(--color-foreground)] leading-snug">
                     {faq.q}
                   </h3>
                   <svg
@@ -83,7 +83,7 @@ export function FAQ() {
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="text-[15px] leading-relaxed text-[color:var(--color-foreground-secondary)] pr-8">
+                    <p className="text-[14px] sm:text-[15px] leading-relaxed text-[color:var(--color-foreground-secondary)] pr-2 sm:pr-8">
                       {faq.a}
                     </p>
                   </div>
@@ -96,10 +96,10 @@ export function FAQ() {
         <p className="mt-10 text-center text-[14px] text-[color:var(--color-foreground-muted)]">
           Still have questions?{" "}
           <a
-            href="mailto:hello@squash.ai"
+            href="mailto:rithen@heysquash.com"
             className="text-[color:var(--color-primary)] font-medium hover:underline"
           >
-            hello@squash.ai
+            rithen@heysquash.com
           </a>
         </p>
       </div>

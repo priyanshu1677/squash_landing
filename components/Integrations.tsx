@@ -22,7 +22,7 @@ export function Integrations() {
     <section
       id="integrations"
       aria-labelledby="integrations-heading"
-      className="py-24 md:py-32 bg-[color:var(--color-surface)] border-y border-[color:var(--color-border)] overflow-hidden"
+      className="py-16 sm:py-20 md:py-32 bg-[color:var(--color-surface)] border-y border-[color:var(--color-border)] overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="max-w-3xl">
@@ -31,12 +31,12 @@ export function Integrations() {
           </p>
           <h2
             id="integrations-heading"
-            className="mt-3 text-[36px] md:text-[48px] leading-[1.08] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+            className="mt-3 text-[30px] sm:text-[36px] md:text-[48px] leading-[1.1] tracking-[-0.02em] text-[color:var(--color-foreground)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Plugs into every tool a PM already lives in.
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-2xl">
+          <p className="mt-4 text-[15px] sm:text-[16px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-2xl">
             Connect once. Squash pulls signal, writes back decisions, and keeps
             your system of record clean. Jira stays Jira, Notion stays Notion.
           </p>
@@ -45,7 +45,7 @@ export function Integrations() {
 
       {/* Marquee */}
       <div
-        className="relative mt-14"
+        className="relative mt-10 sm:mt-12 md:mt-14"
         style={{
           maskImage:
             "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
@@ -69,8 +69,8 @@ export function Integrations() {
       </div>
 
       {/* Category grid */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 mt-16">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-8">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 mt-12 md:mt-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 sm:gap-x-8 gap-y-8">
           {Object.entries(byCategory).map(([category, items]) => (
             <div key={category}>
               <h3 className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[color:var(--color-foreground-muted)] pb-3 border-b border-[color:var(--color-border)]">

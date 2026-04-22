@@ -14,21 +14,15 @@ function dedupeIntegrations(calls: ToolCall[]): ToolCall[] {
 }
 
 // UseCases — scroll-driven interactive section.
-// Four sub-sections stack vertically; a chips bar sticks below the main
-// header as the user scrolls and the active chip updates via an
-// IntersectionObserver that tracks which use-case panel is in view.
-// Clicking a chip smooth-scrolls to that panel.
-const HEADER_OFFSET = 64;
-
+// Four sub-sections stack vertically. The chips bar is `position: sticky`
+// below the site header (top-16) while panels scroll past, and unsticks
+// naturally once the panels container ends. An IntersectionObserver keeps
+// the active chip in sync with whichever panel is centered in the viewport.
 export function UseCases() {
   const [activeIdx, setActiveIdx] = useState(0);
-  const [pinned, setPinned] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
   const panelRefs = useRef<Array<HTMLElement | null>>([]);
-  const topSentinelRef = useRef<HTMLDivElement>(null);
-  const bottomSentinelRef = useRef<HTMLDivElement>(null);
   const chipsRef = useRef<HTMLDivElement>(null);
-  const [chipsHeight, setChipsHeight] = useState(0);
+  const activeChipRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -53,58 +47,43 @@ export function UseCases() {
     return () => observers.forEach((io) => io.disconnect());
   }, []);
 
-  // Pin chips between the top sentinel (just above chip row) and the bottom
-  // sentinel (at the end of the panels). Runs on scroll and resize.
+  // Keep the active chip scrolled into view on mobile where the chip row
+  // overflows horizontally. Without this the active chip can sit off-screen.
   useEffect(() => {
-    const check = () => {
-      const top = topSentinelRef.current?.getBoundingClientRect().top;
-      const bottom = bottomSentinelRef.current?.getBoundingClientRect().top;
-      if (top === undefined || bottom === undefined) return;
-      setPinned(top <= HEADER_OFFSET && bottom > HEADER_OFFSET);
-    };
-    check();
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check);
-    return () => {
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!chipsRef.current) return;
-    const ro = new ResizeObserver(() => {
-      if (chipsRef.current) setChipsHeight(chipsRef.current.offsetHeight);
-    });
-    ro.observe(chipsRef.current);
-    setChipsHeight(chipsRef.current.offsetHeight);
-    return () => ro.disconnect();
-  }, []);
+    const chip = activeChipRef.current;
+    const row = chipsRef.current;
+    if (!chip || !row) return;
+    const chipRect = chip.getBoundingClientRect();
+    const rowRect = row.getBoundingClientRect();
+    if (chipRect.left < rowRect.left || chipRect.right > rowRect.right) {
+      chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [activeIdx]);
 
   const scrollToPanel = (i: number) => {
     const el = panelRefs.current[i];
     if (!el) return;
-    const headerOffset = 64 + 56; // sticky header + chips bar
+    // 64 = site header; ~52 = sticky chip bar height.
+    const headerOffset = 64 + 52;
     const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
     window.scrollTo({ top, behavior: "smooth" });
   };
 
   return (
     <section
-      ref={sectionRef}
       id="use-cases"
       aria-labelledby="use-cases-heading"
       className="relative bg-[color:var(--color-background)]"
     >
       {/* Intro */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-24 md:pt-32 pb-12 md:pb-16">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-16 sm:pt-20 md:pt-32 pb-8 sm:pb-12 md:pb-16">
         <div className="max-w-3xl">
           <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-primary)]">
             Use cases
           </p>
           <h2
             id="use-cases-heading"
-            className="mt-3 text-[36px] md:text-[48px] leading-[1.08] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+            className="mt-3 text-[30px] sm:text-[36px] md:text-[48px] leading-[1.1] tracking-[-0.02em] text-[color:var(--color-foreground)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Ask anything.
@@ -113,129 +92,121 @@ export function UseCases() {
               Squash figures out which tools to use and in what order.
             </span>
           </h2>
-          <p className="mt-5 text-[16px] lg:text-[17px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-2xl">
-            Talk with your product stack just like developers talk with their codebase. 
+          <p className="mt-4 sm:mt-5 text-[15px] sm:text-[16px] lg:text-[17px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-2xl">
+            Talk with your product stack just like developers talk with their codebase.
             Get the insights and artifacts you need, without having to stitch together the context yourself.
           </p>
         </div>
       </div>
 
-      {/* Sentinel: when this scrolls above the header, pin the chips. */}
-      <div ref={topSentinelRef} aria-hidden="true" />
-
-      {/* Chips row. Pinned to top-16 via `fixed` while inside the section. */}
-      <div
-        ref={chipsRef}
-        className={`${
-          pinned
-            ? "fixed top-16 left-0 right-0"
-            : "relative"
-        } z-30 bg-[color:var(--color-background)]/85 backdrop-blur-md border-y border-[color:var(--color-border)]`}
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div
-            role="tablist"
-            aria-label="Use case navigation"
-            className="flex gap-2 overflow-x-auto py-3 no-scrollbar"
-          >
-            {USE_CASES.map((uc, i) => {
-              const active = i === activeIdx;
-              return (
-                <button
-                  key={uc.id}
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => scrollToPanel(i)}
-                  className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium border transition-colors ${
-                    active
-                      ? "bg-[color:var(--color-primary)] text-white border-[color:var(--color-primary)]"
-                      : "bg-white text-[color:var(--color-foreground-secondary)] border-[color:var(--color-border)] hover:border-[color:var(--color-foreground)] hover:text-[color:var(--color-foreground)]"
-                  }`}
-                >
-                  {uc.tabLabel}
-                </button>
-              );
-            })}
+      {/* Sticky chip + panels share a parent so chips stop sticking at the
+          end of the panels naturally. */}
+      <div>
+        {/* Chips row — position: sticky keeps it pinned below the header
+            while any panel is in view, then releases at the bottom of
+            this wrapper. Works on mobile without any JS. */}
+        <div className="sticky top-16 z-30 bg-[color:var(--color-background)]/90 backdrop-blur-md border-y border-[color:var(--color-border)]">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div
+              ref={chipsRef}
+              role="tablist"
+              aria-label="Use case navigation"
+              className="flex gap-2 overflow-x-auto py-2.5 sm:py-3 no-scrollbar"
+            >
+              {USE_CASES.map((uc, i) => {
+                const active = i === activeIdx;
+                return (
+                  <button
+                    key={uc.id}
+                    ref={active ? activeChipRef : null}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => scrollToPanel(i)}
+                    className={`shrink-0 px-3.5 sm:px-4 py-1.5 rounded-full text-[12.5px] sm:text-[13px] font-medium border transition-colors ${
+                      active
+                        ? "bg-[color:var(--color-primary)] text-white border-[color:var(--color-primary)]"
+                        : "bg-white text-[color:var(--color-foreground-secondary)] border-[color:var(--color-border)] hover:border-[color:var(--color-foreground)] hover:text-[color:var(--color-foreground)]"
+                    }`}
+                  >
+                    {uc.tabLabel}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Spacer that reserves the chip row's height while it's pinned */}
-      {pinned && <div style={{ height: chipsHeight }} aria-hidden="true" />}
-
-      {/* Stacked use case panels */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {USE_CASES.map((uc, i) => (
-          <article
-            key={uc.id}
-            id={`use-case-${uc.id}`}
-            ref={(el) => {
-              panelRefs.current[i] = el;
-            }}
-            className="py-16 md:py-24 border-b border-[color:var(--color-border)] last:border-b-0"
-            aria-labelledby={`use-case-${uc.id}-title`}
-          >
-            <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-              {/* Left: narrative */}
-              <div className="lg:col-span-5 lg:sticky lg:top-36 self-start">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-primary)]">
-                  {String(i + 1).padStart(2, "0")} · {uc.tabLabel}
-                </p>
-                <h3
-                  id={`use-case-${uc.id}-title`}
-                  className="mt-3 text-[28px] md:text-[34px] leading-[1.12] tracking-[-0.01em] text-[color:var(--color-foreground)]"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  {headlineFor(uc.id)}
-                </h3>
-                <p className="mt-4 text-[15px] lg:text-[16px] leading-relaxed text-[color:var(--color-foreground-secondary)]">
-                  {uc.blurb}
-                </p>
-
-                {/* Prompt preview */}
-                <div className="mt-6 p-4 rounded-lg bg-[color:var(--color-background-tertiary)] border border-[color:var(--color-border)]">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground-muted)] mb-2">
-                    The ask
+        {/* Stacked use case panels */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          {USE_CASES.map((uc, i) => (
+            <article
+              key={uc.id}
+              id={`use-case-${uc.id}`}
+              ref={(el) => {
+                panelRefs.current[i] = el;
+              }}
+              className="py-10 sm:py-14 md:py-24 border-b border-[color:var(--color-border)] last:border-b-0"
+              aria-labelledby={`use-case-${uc.id}-title`}
+            >
+              <div className="grid lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 items-start">
+                {/* Left: narrative */}
+                <div className="lg:col-span-5 lg:sticky lg:top-36 self-start">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-primary)]">
+                    {String(i + 1).padStart(2, "0")} · {uc.tabLabel}
                   </p>
-                  <p className="font-mono text-[12px] leading-relaxed text-[color:var(--color-foreground)]">
-                    {uc.prompt}
+                  <h3
+                    id={`use-case-${uc.id}-title`}
+                    className="mt-3 text-[24px] sm:text-[28px] md:text-[34px] leading-[1.15] tracking-[-0.01em] text-[color:var(--color-foreground)]"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    {headlineFor(uc.id)}
+                  </h3>
+                  <p className="mt-3 sm:mt-4 text-[14.5px] sm:text-[15px] lg:text-[16px] leading-relaxed text-[color:var(--color-foreground-secondary)]">
+                    {uc.blurb}
                   </p>
-                </div>
 
-                {/* Integrations used */}
-                <div className="mt-5">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground-muted)] mb-2.5">
-                    Tools Squash reached for
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {dedupeIntegrations(uc.toolCalls).map((tc) => (
-                      <span
-                        key={`${uc.id}-chip-${tc.integration}`}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-[color:var(--color-border)] text-[11px] text-[color:var(--color-foreground-secondary)]"
-                      >
+                  {/* Prompt preview */}
+                  <div className="mt-5 sm:mt-6 p-3.5 sm:p-4 rounded-lg bg-[color:var(--color-background-tertiary)] border border-[color:var(--color-border)]">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground-muted)] mb-2">
+                      The ask
+                    </p>
+                    <p className="font-mono text-[11.5px] sm:text-[12px] leading-relaxed text-[color:var(--color-foreground)] break-words">
+                      {uc.prompt}
+                    </p>
+                  </div>
+
+                  {/* Integrations used */}
+                  <div className="mt-5">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground-muted)] mb-2.5">
+                      Tools Squash reached for
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {dedupeIntegrations(uc.toolCalls).map((tc) => (
                         <span
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: tc.integrationColor }}
-                          aria-hidden="true"
-                        />
-                        {tc.integration}
-                      </span>
-                    ))}
+                          key={`${uc.id}-chip-${tc.integration}`}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-[color:var(--color-border)] text-[11px] text-[color:var(--color-foreground-secondary)]"
+                        >
+                          <span
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: tc.integrationColor }}
+                            aria-hidden="true"
+                          />
+                          {tc.integration}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Right: interactive mock */}
-              <div className="lg:col-span-7">
-                <InteractiveUseCaseMock useCase={uc} />
+                {/* Right: interactive mock */}
+                <div className="lg:col-span-7">
+                  <InteractiveUseCaseMock useCase={uc} />
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
+        </div>
       </div>
-
-      {/* Sentinel: once this scrolls above the header, unpin the chips. */}
-      <div ref={bottomSentinelRef} aria-hidden="true" />
     </section>
   );
 }

@@ -8,7 +8,7 @@ export function Features() {
     <section
       id="features"
       aria-labelledby="features-heading"
-      className="py-24 md:py-32 bg-[color:var(--color-background)]"
+      className="py-16 sm:py-20 md:py-32 bg-[color:var(--color-background)]"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="max-w-3xl">
@@ -17,7 +17,7 @@ export function Features() {
           </p>
           <h2
             id="features-heading"
-            className="mt-3 text-[36px] md:text-[48px] leading-[1.08] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+            className="mt-3 text-[30px] sm:text-[36px] md:text-[48px] leading-[1.1] tracking-[-0.02em] text-[color:var(--color-foreground)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Everything a PM actually does,
@@ -25,11 +25,11 @@ export function Features() {
           </h2>
         </div>
 
-        <div className="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="mt-10 sm:mt-12 md:mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {FEATURES.map((f, i) => (
             <article
               key={f.title}
-              className="card-hover p-6 rounded-xl bg-[color:var(--color-surface)] border border-[color:var(--color-border)] flex flex-col"
+              className="card-hover p-5 sm:p-6 rounded-xl bg-[color:var(--color-surface)] border border-[color:var(--color-border)] flex flex-col"
             >
               <div className="flex items-center justify-between">
                 <FeatureIcon index={i} />
@@ -37,10 +37,10 @@ export function Features() {
                   0{i + 1}
                 </span>
               </div>
-              <h3 className="mt-5 text-[17px] font-semibold text-[color:var(--color-foreground)] leading-snug">
+              <h3 className="mt-4 sm:mt-5 text-[16px] sm:text-[17px] font-semibold text-[color:var(--color-foreground)] leading-snug">
                 {f.title}
               </h3>
-              <p className="mt-2 text-[13.5px] leading-relaxed text-[color:var(--color-foreground-secondary)] flex-1">
+              <p className="mt-2 text-[13px] sm:text-[13.5px] leading-relaxed text-[color:var(--color-foreground-secondary)] flex-1">
                 {f.body}
               </p>
               <p className="mt-4 pt-3 border-t border-[color:var(--color-border-light)] text-[11px] text-[color:var(--color-foreground-muted)] font-mono">
