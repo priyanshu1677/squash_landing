@@ -18,7 +18,7 @@ const FOOTER_COLUMNS = [
       { label: "About", href: "/about" },
       { label: "Careers", href: "/careers" },
       { label: "Blog", href: "/blog" },
-      { label: "Contact", href: "mailto:hello@squash.ai" },
+      { label: "Contact", href: "mailto:hello@heysquash.com" },
     ],
   },
   {
