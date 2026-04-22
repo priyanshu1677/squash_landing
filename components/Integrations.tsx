@@ -38,7 +38,7 @@ export function Integrations() {
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-2xl">
             Connect once. Squash pulls signal, writes back decisions, and keeps
-            your system of record clean — Jira stays Jira, Notion stays Notion.
+            your system of record clean. Jira stays Jira, Notion stays Notion.
           </p>
         </div>
       </div>
@@ -59,7 +59,7 @@ export function Integrations() {
               key={`${item.name}-${i}`}
               className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[color:var(--color-background-tertiary)] border border-[color:var(--color-border)]"
             >
-              <IntegrationMark name={item.name} color={item.color} size={20} />
+              <IntegrationMark name={item.name} color={item.color} slug={item.slug} size={20} />
               <span className="text-[13px] font-medium text-[color:var(--color-foreground)] whitespace-nowrap">
                 {item.name}
               </span>
@@ -79,7 +79,7 @@ export function Integrations() {
               <ul className="mt-3 space-y-2.5">
                 {items.map((item) => (
                   <li key={item.name} className="flex items-center gap-2.5">
-                    <IntegrationMark name={item.name} color={item.color} size={18} />
+                    <IntegrationMark name={item.name} color={item.color} slug={item.slug} size={18} />
                     <span className="text-[13.5px] text-[color:var(--color-foreground-secondary)]">
                       {item.name}
                     </span>

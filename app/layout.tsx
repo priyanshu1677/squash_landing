@@ -34,11 +34,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://heysquash.com"),
   title: {
-    default: "Squash — AI for Product Managers | Stop building on gut",
+    default: "Squash · AI for Product Managers | Stop building on gut",
     template: "%s | Squash",
   },
   description:
-    "Squash is the AI decision layer for Product Managers. Synthesize tickets, sessions, and analytics in plain English — then ship PRDs, dashboards, and specs grounded in real user signal.",
+    "Squash is the decision layer for Product Managers. Synthesize tickets, sessions, and analytics in plain English. Ship PRDs, dashboards, and specs backed by real user signal.",
   keywords: [
     "AI for product managers",
     "product management AI",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://heysquash.com",
     siteName: "Squash",
-    title: "Squash — AI for Product Managers",
+    title: "Squash · AI for Product Managers",
     description:
       "The decision layer for PMs. Turn tickets, sessions, and analytics into a prioritized roadmap.",
     images: [
@@ -67,16 +67,16 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Squash — AI for Product Managers",
+        alt: "Squash · AI for Product Managers",
       },
     ],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Squash — AI for Product Managers",
+    title: "Squash · AI for Product Managers",
     description:
-      "Stop building on gut. Ship products your users actually want, grounded in real signal.",
+      "Stop building on gut. Ship products your users actually want, backed by real signal.",
     images: ["/og-image.png"],
     creator: "@squash",
   },
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.svg",
     apple: "/apple-touch-icon.png",
   },
   category: "technology",
@@ -111,7 +111,7 @@ const organizationSchema = {
   url: "https://heysquash.com",
   logo: "https://heysquash.com/logo.png",
   description:
-    "Squash is the AI decision layer for Product Managers, synthesizing user feedback, analytics, and sessions into actionable product decisions.",
+    "Squash is the decision layer for Product Managers, synthesizing user feedback, analytics, and sessions into actionable product decisions.",
   sameAs: [
     "https://twitter.com/squash",
     "https://linkedin.com/company/squash",
@@ -126,7 +126,7 @@ const softwareApplicationSchema = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "AI-powered decision-making interface for Product Managers. Synthesize user feedback, generate analytics in natural language, detect bugs in real sessions, and draft PRDs grounded in your product context.",
+    "Decision-making interface for Product Managers. Synthesize user feedback, generate analytics in natural language, detect bugs in real sessions, and draft PRDs based on your product context.",
   offers: {
     "@type": "Offer",
     price: "0",
@@ -156,7 +156,7 @@ const faqSchema = {
       name: "What is Squash?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Squash is an AI decision-making interface built for Product Managers. It connects to your tools — tickets, session replays, analytics warehouses, and docs — and synthesizes them into prioritized insights, charts, PRDs, and specs on demand.",
+        text: "Squash is a decision-making interface built for Product Managers. It connects to your tools (tickets, session replays, analytics warehouses, docs) and turns them into prioritized insights, charts, PRDs, and specs on demand.",
       },
     },
     {
@@ -172,7 +172,7 @@ const faqSchema = {
       name: "How does Squash replace data analysts and product ops?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Squash runs SQL against your warehouse, builds charts, and synthesizes support tickets in minutes — work that previously required a data analyst or a product ops team. PMs ask in plain English; Squash writes the query, builds the visualization, and summarizes the signal.",
+        text: "Squash runs SQL against your warehouse, builds charts, and clusters support tickets in minutes. That's work that previously required a data analyst or a product ops team. PMs ask in plain English; Squash writes the query, builds the visualization, and summarizes the result.",
       },
     },
     {
@@ -188,7 +188,7 @@ const faqSchema = {
       name: "How is Squash different from ChatGPT or Claude?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "General-purpose AI doesn't know your users. Squash is grounded in your product context — your tickets, your sessions, your data warehouse, your Jira backlog. Answers cite real tickets, real users, and real queries, not generic patterns.",
+        text: "General-purpose AI doesn't know your users. Squash works inside your product context: your tickets, your sessions, your data warehouse, your Jira backlog. Answers cite real tickets, real users, and real queries, not generic patterns.",
       },
     },
     {
@@ -196,7 +196,7 @@ const faqSchema = {
       name: "Does Squash write PRDs and specs?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. Squash drafts PRDs, user stories, feature specs, and competitive analyses grounded in your actual product context and user feedback. Every claim links back to the source ticket, session, or data query.",
+        text: "Yes. Squash drafts PRDs, user stories, feature specs, and competitive analyses based on your actual product context and user feedback. Every claim links back to the source ticket, session, or data query.",
       },
     },
     {
@@ -204,7 +204,7 @@ const faqSchema = {
       name: "Is my data secure?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Squash is SOC 2 Type II compliant. Your data stays in your workspace — we never train models on your data, and all integrations use least-privilege OAuth scopes with read-only access by default.",
+        text: "Your data stays in your workspace. We never train models on your data, and all integrations use least-privilege OAuth scopes with read-only access by default.",
       },
     },
     {

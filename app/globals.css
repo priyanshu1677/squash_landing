@@ -144,6 +144,12 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   NO-SCROLLBAR (chip row, etc)
+   ───────────────────────────────────────────────────────────── */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ─────────────────────────────────────────────────────────────
    FOCUS RINGS (a11y)
    ───────────────────────────────────────────────────────────── */
 :focus-visible {

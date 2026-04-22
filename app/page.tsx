@@ -14,13 +14,13 @@ import { Footer } from "@/components/Footer";
 
 // Landing page composition.
 // Section order is deliberate:
-//   Hero → Logo cloud → Problem → Solution → Features
-//   → How it works → Use cases → Integrations → Testimonials
-//   → FAQ → Final CTA → Footer
+//   Hero → Logo cloud → Problem → Solution → Use cases
+//   → How it works → Features (capabilities) → Integrations
+//   → Testimonials → FAQ → Final CTA → Footer
 //
-// This pattern (problem BEFORE solution, features AFTER solution) is a
-// tested conversion structure: it ensures visitors feel understood
-// before we sell to them.
+// Problem BEFORE solution; Use cases demo the value first, then
+// How it works explains the mechanism for visitors who are sold
+// on the outcome and now want to know how it's delivered.
 export default function Page() {
   return (
     <>
@@ -30,9 +30,9 @@ export default function Page() {
         <LogoCloud />
         <Problem />
         <Solution />
-        <Features />
-        <HowItWorks />
         <UseCases />
+        <HowItWorks />
+        <Features />
         <Integrations />
         <Testimonials />
         <FAQ />
