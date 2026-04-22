@@ -43,8 +43,8 @@ export function Hero() {
               className="fade-up mt-6 flex flex-col sm:flex-row gap-3"
               style={{ animationDelay: "280ms" }}
             >
-              <Link
-                href="/signup"
+              <a
+                href="https://app.heysquash.com"
                 className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full bg-[color:var(--color-primary)] text-white font-medium text-sm hover:bg-[color:var(--color-primary-hover)] transition-colors"
               >
                 Get started for free
@@ -52,13 +52,13 @@ export function Hero() {
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
-              </Link>
-              <Link
-                href="/demo"
+              </a>
+              <a
+                href="https://app.heysquash.com"
                 className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full bg-white border border-[color:var(--color-border)] text-[color:var(--color-foreground)] font-medium text-sm hover:border-[color:var(--color-foreground)] transition-colors"
               >
                 Book a demo
-              </Link>
+              </a>
             </div>
 
             <div

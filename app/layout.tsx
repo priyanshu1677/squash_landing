@@ -32,7 +32,7 @@ const geistMono = Geist_Mono({
 // SEO METADATA — optimized for "AI for product managers" intent
 // ─────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
-  metadataBase: new URL("https://squash.ai"),
+  metadataBase: new URL("https://heysquash.com"),
   title: {
     default: "Squash · AI for Product Managers | Stop building on gut",
     template: "%s | Squash",
@@ -54,10 +54,10 @@ export const metadata: Metadata = {
   authors: [{ name: "Squash" }],
   creator: "Squash",
   publisher: "Squash",
-  alternates: { canonical: "https://squash.ai" },
+  alternates: { canonical: "https://heysquash.com" },
   openGraph: {
     type: "website",
-    url: "https://squash.ai",
+    url: "https://heysquash.com",
     siteName: "Squash",
     title: "Squash · AI for Product Managers",
     description:
@@ -108,8 +108,8 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Squash",
-  url: "https://squash.ai",
-  logo: "https://squash.ai/logo.png",
+  url: "https://heysquash.com",
+  logo: "https://heysquash.com/logo.png",
   description:
     "Squash is the decision layer for Product Managers, synthesizing user feedback, analytics, and sessions into actionable product decisions.",
   sameAs: [
