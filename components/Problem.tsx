@@ -24,7 +24,7 @@ export function Problem() {
     <section
       id="problem"
       aria-labelledby="problem-heading"
-      className="py-24 md:py-32 bg-[color:var(--color-background)]"
+      className="py-16 sm:py-20 md:py-32 bg-[color:var(--color-background)]"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="max-w-3xl">
@@ -33,7 +33,7 @@ export function Problem() {
           </p>
           <h2
             id="problem-heading"
-            className="mt-3 text-[36px] md:text-[48px] leading-[1.08] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+            className="mt-3 text-[30px] sm:text-[36px] md:text-[48px] leading-[1.1] tracking-[-0.02em] text-[color:var(--color-foreground)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Your customers are already telling you what to build.
@@ -41,22 +41,22 @@ export function Problem() {
           </h2>
         </div>
 
-        <div className="mt-12 grid md:grid-cols-3 gap-5">
+        <div className="mt-10 md:mt-12 grid md:grid-cols-3 gap-4 sm:gap-5">
           {PROBLEMS.map((p) => (
             <article
               key={p.title}
-              className="card-hover p-7 rounded-xl bg-[color:var(--color-surface)] border border-[color:var(--color-border)]"
+              className="card-hover p-6 sm:p-7 rounded-xl bg-[color:var(--color-surface)] border border-[color:var(--color-border)]"
             >
               <div
-                className="text-[32px] leading-none text-[color:var(--color-primary)]"
+                className="text-[26px] sm:text-[32px] leading-[1.1] text-[color:var(--color-primary)]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 {p.label}
               </div>
-              <h3 className="mt-5 text-[17px] font-semibold text-[color:var(--color-foreground)] leading-snug">
+              <h3 className="mt-4 sm:mt-5 text-[16px] sm:text-[17px] font-semibold text-[color:var(--color-foreground)] leading-snug">
                 {p.title}
               </h3>
-              <p className="mt-2.5 text-[14px] leading-relaxed text-[color:var(--color-foreground-secondary)]">
+              <p className="mt-2.5 text-[13.5px] sm:text-[14px] leading-relaxed text-[color:var(--color-foreground-secondary)]">
                 {p.body}
               </p>
             </article>

@@ -131,7 +131,7 @@ export function InteractiveUseCaseMock({ useCase }: { useCase: UseCase }) {
             <span className="w-2.5 h-2.5 rounded-full bg-[#ffc107]/60" />
             <span className="w-2.5 h-2.5 rounded-full bg-[#4caf50]/60" />
           </div>
-          <span className="text-[11px] font-mono text-[color:var(--color-foreground-muted)]">
+          <span className="text-[10px] sm:text-[11px] font-mono text-[color:var(--color-foreground-muted)] truncate max-w-[55%]">
             {useCase.sessionPath}
           </span>
           <button
@@ -157,10 +157,10 @@ export function InteractiveUseCaseMock({ useCase }: { useCase: UseCase }) {
           </button>
         </div>
 
-        <div className="p-5 sm:p-6 flex flex-col gap-4">
+        <div className="p-3.5 sm:p-5 md:p-6 flex flex-col gap-3.5 sm:gap-4">
           {/* Prompt row — right-aligned bubble, mirroring the real chat UI */}
           <div className="flex justify-end min-h-[60px]">
-            <div className="max-w-[85%] bg-[color:var(--color-background-secondary)] border border-[color:var(--color-border)] rounded-2xl rounded-tr-md px-4 py-2.5 text-[13px] leading-relaxed text-[color:var(--color-foreground)] whitespace-pre-wrap text-left">
+            <div className="max-w-[90%] sm:max-w-[85%] bg-[color:var(--color-background-secondary)] border border-[color:var(--color-border)] rounded-2xl rounded-tr-md px-3.5 sm:px-4 py-2.5 text-[12.5px] sm:text-[13px] leading-relaxed text-[color:var(--color-foreground)] whitespace-pre-wrap text-left break-words">
               {useCase.prompt.slice(0, charCount)}
               {show.prompt && charCount < useCase.prompt.length && (
                 <span className="caret inline-block w-[2px] h-[14px] bg-[color:var(--color-primary)] align-middle ml-0.5" />
@@ -230,7 +230,7 @@ export function InteractiveUseCaseMock({ useCase }: { useCase: UseCase }) {
                     type="button"
                     disabled={!isDone}
                     onClick={() => setExpandedTool(isExpanded ? null : i)}
-                    className={`w-full px-3.5 py-2 flex items-center gap-2.5 text-left transition-colors ${
+                    className={`w-full px-3 sm:px-3.5 py-2 flex items-center gap-2 sm:gap-2.5 text-left transition-colors ${
                       isDone
                         ? "hover:bg-[color:var(--color-background-tertiary)] cursor-pointer"
                         : "cursor-default"
@@ -275,7 +275,7 @@ export function InteractiveUseCaseMock({ useCase }: { useCase: UseCase }) {
                     </span>
                     {isDone && (
                       <>
-                        <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-[color:var(--color-success-subtle)] text-[color:var(--color-success)] uppercase tracking-wider">
+                        <span className="hidden sm:inline-block text-[9px] font-semibold px-1.5 py-0.5 rounded bg-[color:var(--color-success-subtle)] text-[color:var(--color-success)] uppercase tracking-wider">
                           Result
                         </span>
                         <svg
@@ -337,11 +337,11 @@ export function InteractiveUseCaseMock({ useCase }: { useCase: UseCase }) {
           </div>
 
           {/* Metric tiles */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
             {useCase.metrics.map((m, i) => (
               <div
                 key={`${useCase.id}-metric-${m.label}`}
-                className="border border-[color:var(--color-border)] rounded-lg p-2.5"
+                className="border border-[color:var(--color-border)] rounded-lg p-2 sm:p-2.5"
                 style={{
                   opacity: show.metrics ? 1 : 0,
                   transform: show.metrics ? "translateY(0)" : "translateY(6px)",
@@ -352,10 +352,10 @@ export function InteractiveUseCaseMock({ useCase }: { useCase: UseCase }) {
                   }ms`,
                 }}
               >
-                <p className="text-[9px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground-muted)]">
+                <p className="text-[9px] font-semibold uppercase tracking-wider text-[color:var(--color-foreground-muted)] truncate">
                   {m.label}
                 </p>
-                <p className="mt-1 text-[18px] font-semibold text-[color:var(--color-foreground)]">
+                <p className="mt-1 text-[16px] sm:text-[18px] font-semibold text-[color:var(--color-foreground)]">
                   {m.value}
                 </p>
                 <p

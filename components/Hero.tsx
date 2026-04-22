@@ -12,12 +12,12 @@ export function Hero() {
     <section className="relative overflow-hidden hero-gradient">
       <div className="absolute inset-0 grid-bg pointer-events-none" aria-hidden="true" />
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-8 md:pt-10 pb-10 md:pb-12 lg:min-h-[calc(100svh-4rem)]">
-        <div className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-start w-full lg:pt-2">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-6 md:pt-10 pb-12 md:pb-12 lg:min-h-[calc(100svh-4rem)]">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start w-full lg:pt-2">
           {/* Text column */}
           <div className="lg:col-span-6 flex flex-col items-start lg:mt-[6svh] xl:mt-[8svh]">
             <h1
-              className="fade-up text-[38px] sm:text-[48px] lg:text-[48px] xl:text-[56px] 2xl:text-[60px] leading-[1.05] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+              className="fade-up text-[34px] sm:text-[44px] lg:text-[48px] xl:text-[56px] 2xl:text-[60px] leading-[1.05] tracking-[-0.02em] text-[color:var(--color-foreground)]"
               style={{
                 fontFamily: "var(--font-display)",
                 animationDelay: "80ms",
@@ -40,11 +40,11 @@ export function Hero() {
             </p>
 
             <div
-              className="fade-up mt-6 flex flex-col sm:flex-row gap-3"
+              className="fade-up mt-6 flex flex-col sm:flex-row gap-3 w-full sm:w-auto"
               style={{ animationDelay: "280ms" }}
             >
-              <a
-                href="https://app.heysquash.com"
+              <Link
+                href="/signup"
                 className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full bg-[color:var(--color-primary)] text-white font-medium text-sm hover:bg-[color:var(--color-primary-hover)] transition-colors"
               >
                 Get started for free
@@ -52,9 +52,11 @@ export function Hero() {
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
-              </a>
+              </Link>
               <a
-                href="https://app.heysquash.com"
+                href="https://cal.com/heysquash/squash-onboarding"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full bg-white border border-[color:var(--color-border)] text-[color:var(--color-foreground)] font-medium text-sm hover:border-[color:var(--color-foreground)] transition-colors"
               >
                 Book a demo

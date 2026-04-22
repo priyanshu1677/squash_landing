@@ -8,7 +8,7 @@ export function Solution() {
     <section
       id="solution"
       aria-labelledby="solution-heading"
-      className="py-24 md:py-32 bg-[color:var(--color-surface)] border-y border-[color:var(--color-border)]"
+      className="py-16 sm:py-20 md:py-32 bg-[color:var(--color-surface)] border-y border-[color:var(--color-border)]"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="max-w-3xl">
@@ -17,13 +17,13 @@ export function Solution() {
           </p>
           <h2
             id="solution-heading"
-            className="mt-3 text-[36px] md:text-[48px] leading-[1.08] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+            className="mt-3 text-[30px] sm:text-[36px] md:text-[48px] leading-[1.1] tracking-[-0.02em] text-[color:var(--color-foreground)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             One chat. Your whole product stack.
             <span className="text-[color:var(--color-foreground-muted)]"> Real answers from real data.</span>
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-2xl">
+          <p className="mt-4 text-[15px] sm:text-[16px] leading-relaxed text-[color:var(--color-foreground-secondary)] max-w-2xl">
             Squash is a Cursor-like interface for Product Managers. Ask
             anything, from "fetch insights last week's tickets" to "draft the PRD for
             the refund retry flow", and Squash does the work across every tool
@@ -31,12 +31,12 @@ export function Solution() {
           </p>
         </div>
 
-        <div className="mt-14 grid md:grid-cols-2 gap-5">
+        <div className="mt-10 sm:mt-12 md:mt-14 grid md:grid-cols-2 gap-4 sm:gap-5">
           {SOLUTION_PILLARS.map((pillar, i) => (
             <article
               key={pillar.eyebrow}
               id={pillar.href.slice(1)}
-              className="card-hover p-7 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-background-tertiary)] flex flex-col"
+              className="card-hover p-6 sm:p-7 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-background-tertiary)] flex flex-col"
             >
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-semibold text-[color:var(--color-foreground-muted)]">
@@ -47,17 +47,17 @@ export function Solution() {
                 </span>
               </div>
               <h3
-                className="mt-4 text-[24px] leading-[1.15] tracking-[-0.01em] text-[color:var(--color-foreground)]"
+                className="mt-4 text-[22px] sm:text-[24px] leading-[1.15] tracking-[-0.01em] text-[color:var(--color-foreground)]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 {pillar.title}
               </h3>
-              <p className="mt-3 text-[14.5px] leading-relaxed text-[color:var(--color-foreground-secondary)] flex-1">
+              <p className="mt-3 text-[14px] sm:text-[14.5px] leading-relaxed text-[color:var(--color-foreground-secondary)] flex-1">
                 {pillar.body}
               </p>
 
               {/* Tiny illustration per pillar */}
-              <div className="mt-6 rounded-lg border border-[color:var(--color-border)] bg-white p-4">
+              <div className="mt-5 sm:mt-6 rounded-lg border border-[color:var(--color-border)] bg-white p-3.5 sm:p-4 overflow-hidden">
                 <PillarVisual index={i} />
               </div>
             </article>
