@@ -142,13 +142,13 @@ function SynthesizeVisual() {
       </div>
       <div className="mt-2.5 space-y-2">
         {themes.map((t) => (
-          <div key={t.label} className="flex items-center gap-2">
-            <span className="text-[11px] text-[color:var(--color-foreground-secondary)] flex-1 truncate">
+          <div key={t.label} className="flex items-center gap-1.5 sm:gap-2">
+            <span className="text-[11px] text-[color:var(--color-foreground-secondary)] flex-1 min-w-0 truncate">
               {t.label}
             </span>
             <SourceDots colors={t.sources} />
             <span
-              className={`text-[10px] font-mono tabular-nums w-9 text-right ${
+              className={`shrink-0 text-[10px] font-mono tabular-nums w-8 sm:w-9 text-right ${
                 t.up
                   ? "text-[color:var(--color-foreground-muted)]"
                   : "text-[color:var(--color-success)]"
@@ -156,13 +156,13 @@ function SynthesizeVisual() {
             >
               {t.delta}
             </span>
-            <div className="w-14 h-1.5 rounded-full bg-[color:var(--color-background-secondary)] overflow-hidden">
+            <div className="shrink-0 w-10 sm:w-14 h-1.5 rounded-full bg-[color:var(--color-background-secondary)] overflow-hidden">
               <div
                 className="h-full bg-[color:var(--color-primary)]"
                 style={{ width: `${t.pct}%` }}
               />
             </div>
-            <span className="text-[10px] font-mono tabular-nums text-[color:var(--color-foreground)] w-7 text-right">
+            <span className="shrink-0 text-[10px] font-mono tabular-nums text-[color:var(--color-foreground)] w-7 text-right">
               {t.count}
             </span>
           </div>
@@ -181,9 +181,9 @@ function AnalyzeVisual() {
   ];
   return (
     <div className="space-y-2.5">
-      <div className="flex items-center gap-1.5">
-        <span className="text-[11px] font-mono text-[color:var(--color-primary)]">&gt;</span>
-        <p className="text-[11px] font-mono text-[color:var(--color-foreground)] truncate">
+      <div className="flex items-center gap-1.5 min-w-0">
+        <span className="text-[11px] font-mono text-[color:var(--color-primary)] shrink-0">&gt;</span>
+        <p className="text-[11px] font-mono text-[color:var(--color-foreground)] truncate min-w-0">
           conversion by channel · 30d · android
         </p>
       </div>

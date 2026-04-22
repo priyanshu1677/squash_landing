@@ -48,15 +48,20 @@ export function UseCases() {
   }, []);
 
   // Keep the active chip scrolled into view on mobile where the chip row
-  // overflows horizontally. Without this the active chip can sit off-screen.
+  // overflows horizontally. Scroll the row itself (not the whole page) by
+  // the minimum amount needed — centering would leave awkward whitespace
+  // to the right of the last chip.
   useEffect(() => {
     const chip = activeChipRef.current;
     const row = chipsRef.current;
     if (!chip || !row) return;
     const chipRect = chip.getBoundingClientRect();
     const rowRect = row.getBoundingClientRect();
-    if (chipRect.left < rowRect.left || chipRect.right > rowRect.right) {
-      chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    const PAD = 16;
+    if (chipRect.left < rowRect.left + PAD) {
+      row.scrollBy({ left: chipRect.left - rowRect.left - PAD, behavior: "smooth" });
+    } else if (chipRect.right > rowRect.right - PAD) {
+      row.scrollBy({ left: chipRect.right - rowRect.right + PAD, behavior: "smooth" });
     }
   }, [activeIdx]);
 
