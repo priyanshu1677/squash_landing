@@ -5,9 +5,10 @@ import {
   useScroll,
   useTransform,
   useReducedMotion,
+  useMotionValueEvent,
   type MotionValue,
 } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { IntegrationMark } from "./ui/IntegrationMark";
 import { INTEGRATIONS } from "@/lib/constants";
 
@@ -23,18 +24,19 @@ const NARRATIVE_LINES = [
   "The data was always there. Nobody had time to find it.",
 ];
 
-const LINE_COUNT = NARRATIVE_LINES.length + 1; // +1 for punchline
-const SEGMENT = 1 / LINE_COUNT;
+// Weighted timing: 5 lines share 72% of scroll, punchline gets 28%.
+const LINE_WEIGHT = 0.72 / NARRATIVE_LINES.length;
+const PUNCHLINE_START = 0.72;
 
 const LINE_RANGES: [number, number][] = NARRATIVE_LINES.map((_, i) => [
-  i * SEGMENT,
-  (i + 1) * SEGMENT,
+  i * LINE_WEIGHT,
+  (i + 1) * LINE_WEIGHT,
 ]);
 
-const PUNCHLINE_RANGE: [number, number] = [
-  NARRATIVE_LINES.length * SEGMENT,
-  1,
-];
+const FADE_FRACTION = 0.24;
+const FADE = LINE_WEIGHT * FADE_FRACTION;
+
+/* ── Background elements ─────────────────────────────────────── */
 
 type BGCard = {
   name: string;
@@ -50,7 +52,7 @@ type BGCard = {
   rotation: number;
   driftDuration: number;
   driftAmount: number;
-  highlightAtLines: number[];
+  activeLines: number[];
 };
 
 const BG_CARDS: BGCard[] = [
@@ -61,14 +63,14 @@ const BG_CARDS: BGCard[] = [
     badge: "1",
     time: "72h ago",
     severity: "critical",
-    top: "8%",
-    left: "2%",
+    top: "6%",
+    left: "1%",
     mobileTop: "2%",
     mobileLeft: "-4%",
-    rotation: -3,
+    rotation: -2.5,
     driftDuration: 7,
     driftAmount: 5,
-    highlightAtLines: [1, 2],
+    activeLines: [0, 1, 2],
   },
   {
     name: "Sentry",
@@ -78,29 +80,29 @@ const BG_CARDS: BGCard[] = [
     time: "72h ago",
     severity: "critical",
     top: "5%",
-    left: "72%",
+    left: "71%",
     mobileTop: "5%",
     mobileLeft: "62%",
-    rotation: 2.5,
+    rotation: 2,
     driftDuration: 8,
     driftAmount: 4,
-    highlightAtLines: [1, 2],
+    activeLines: [1, 2, 3],
   },
   {
     name: "Zendesk",
     signal: "12 tickets — promo issue",
-    detail: "Charged full price",
+    detail: "Users charged full price",
     badge: "12",
     time: "since Tue",
     severity: "warning",
     top: "44%",
-    left: "-1%",
+    left: "0%",
     mobileTop: "35%",
     mobileLeft: "-8%",
     rotation: 1.5,
     driftDuration: 9,
     driftAmount: 3,
-    highlightAtLines: [1],
+    activeLines: [0, 1, 3],
   },
   {
     name: "BigQuery",
@@ -108,14 +110,14 @@ const BG_CARDS: BGCard[] = [
     detail: "Totals diverging from expected",
     time: "unreviewed",
     severity: "info",
-    top: "40%",
-    left: "80%",
+    top: "42%",
+    left: "77%",
     mobileTop: "38%",
     mobileLeft: "68%",
     rotation: -1.5,
     driftDuration: 8,
     driftAmount: 4,
-    highlightAtLines: [1, 3],
+    activeLines: [0, 2, 3],
   },
   {
     name: "Granola",
@@ -124,14 +126,14 @@ const BG_CARDS: BGCard[] = [
     badge: "3",
     time: "this week",
     severity: "info",
-    top: "76%",
-    left: "3%",
+    top: "78%",
+    left: "2%",
     mobileTop: "72%",
     mobileLeft: "-4%",
     rotation: 2,
     driftDuration: 10,
     driftAmount: 3,
-    highlightAtLines: [1],
+    activeLines: [0, 2, 4],
   },
   {
     name: "Hotjar",
@@ -140,49 +142,156 @@ const BG_CARDS: BGCard[] = [
     badge: "47",
     time: "3d",
     severity: "warning",
-    top: "72%",
-    left: "76%",
+    top: "74%",
+    left: "73%",
     mobileTop: "70%",
     mobileLeft: "64%",
     rotation: -2,
     driftDuration: 6,
     driftAmount: 5,
-    highlightAtLines: [1, 3],
+    activeLines: [1, 3, 4],
+  },
+];
+
+// Customer feedback / quotes scattered in the background
+type FeedbackSnippet = {
+  type: "quote" | "metric" | "notification";
+  content: string;
+  subtext?: string;
+  icon?: string;
+  top: string;
+  left: string;
+  rotation: number;
+  driftDuration: number;
+};
+
+const FEEDBACK_SNIPPETS: FeedbackSnippet[] = [
+  // Customer quotes
+  {
+    type: "quote",
+    content: "\"Why was I charged full price?\"",
+    subtext: "— Sarah M., via Zendesk",
+    top: "18%",
+    left: "20%",
+    rotation: -1.5,
+    driftDuration: 8,
+  },
+  {
+    type: "quote",
+    content: "\"Checkout is broken again\"",
+    subtext: "— #product-bugs, Slack",
+    top: "22%",
+    left: "56%",
+    rotation: 1,
+    driftDuration: 9,
+  },
+  {
+    type: "quote",
+    content: "\"Can't apply my promo code\"",
+    subtext: "— Support ticket #4821",
+    top: "58%",
+    left: "18%",
+    rotation: 2,
+    driftDuration: 7,
+  },
+  {
+    type: "quote",
+    content: "\"We're losing enterprise deals\"",
+    subtext: "— VP Sales, Granola call",
+    top: "60%",
+    left: "58%",
+    rotation: -1,
+    driftDuration: 10,
+  },
+  // Metric drops
+  {
+    type: "metric",
+    content: "Conv. Rate",
+    subtext: "↓ 19%",
+    icon: "chart-down",
+    top: "30%",
+    left: "6%",
+    rotation: -1,
+    driftDuration: 8,
+  },
+  {
+    type: "metric",
+    content: "Cart Abandon",
+    subtext: "↑ 34%",
+    icon: "chart-up-bad",
+    top: "34%",
+    left: "86%",
+    rotation: 1.5,
+    driftDuration: 9,
+  },
+  {
+    type: "metric",
+    content: "NPS Score",
+    subtext: "↓ 12 pts",
+    icon: "chart-down",
+    top: "84%",
+    left: "40%",
+    rotation: -2,
+    driftDuration: 7,
+  },
+  {
+    type: "metric",
+    content: "Avg. Resolution",
+    subtext: "↑ 4.2 days",
+    icon: "clock",
+    top: "88%",
+    left: "82%",
+    rotation: 1,
+    driftDuration: 11,
+  },
+  // Notifications
+  {
+    type: "notification",
+    content: "@channel funnel anomaly detected",
+    top: "14%",
+    left: "38%",
+    rotation: 0.5,
+    driftDuration: 8,
+  },
+  {
+    type: "notification",
+    content: "Weekly report: 3 metrics need review",
+    top: "90%",
+    left: "14%",
+    rotation: -1,
+    driftDuration: 9,
+  },
+  {
+    type: "notification",
+    content: "Session replay: 0 of 47 reviewed",
+    top: "50%",
+    left: "85%",
+    rotation: 1.5,
+    driftDuration: 7,
+  },
+  {
+    type: "notification",
+    content: "Dashboard stale: last refresh 6d ago",
+    top: "68%",
+    left: "10%",
+    rotation: -0.5,
+    driftDuration: 10,
   },
 ];
 
 const BG_CONNECTORS: [number, number][] = [
-  [0, 2],
-  [1, 3],
-  [2, 4],
-  [3, 5],
-  [0, 1],
-  [4, 5],
-  [0, 3],
-  [2, 5],
+  [0, 2], [1, 3], [2, 4], [3, 5],
+  [0, 1], [4, 5], [0, 3], [2, 5],
+  [1, 4], [0, 5],
 ];
 
 /* ═══════════════════════════════════════════════════════════════
    HELPERS
    ═══════════════════════════════════════════════════════════════ */
 
-function interpolateHighlight(
-  progress: number,
-  highlightAtLines: number[],
-  base: number,
-  peak: number,
-) {
-  const FADE = 0.02;
-  for (const li of highlightAtLines) {
-    if (li >= LINE_RANGES.length) continue;
-    const [s, e] = LINE_RANGES[li];
-    if (progress >= s + FADE && progress <= e - FADE) return peak;
-    if (progress >= s && progress < s + FADE)
-      return base + (peak - base) * ((progress - s) / FADE);
-    if (progress > e - FADE && progress <= e)
-      return peak - (peak - base) * ((progress - (e - FADE)) / FADE);
-  }
-  return base;
+function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -203,11 +312,10 @@ export function Problem() {
         The Problem
       </h2>
 
-      {/* Desktop — scroll-driven narrative */}
       <div
         ref={containerRef}
         className="hidden md:block relative"
-        style={reduce ? undefined : { height: "400vh" }}
+        style={reduce ? undefined : { height: "580vh" }}
       >
         {reduce ? (
           <ReducedMotionDesktop />
@@ -219,7 +327,6 @@ export function Problem() {
         )}
       </div>
 
-      {/* Mobile — intersection-observer based */}
       <div className="md:hidden">
         <MobileLayout reduce={!!reduce} />
       </div>
@@ -236,36 +343,73 @@ function DesktopBackground({
 }: {
   scrollYProgress: MotionValue<number>;
 }) {
+  const [activeStep, setActiveStep] = useState(0);
+
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    if (p >= PUNCHLINE_START) {
+      setActiveStep(5);
+    } else {
+      setActiveStep(Math.min(4, Math.floor(p / LINE_WEIGHT)));
+    }
+  });
+
+  // Tool cards crescendo then clear for punchline
+  const cardIntensity = useTransform(
+    scrollYProgress,
+    [0, 0.12, 0.45, PUNCHLINE_START - 0.06, PUNCHLINE_START, 1],
+    [0.3, 0.5, 0.7, 0.8, 0.1, 0.06],
+  );
+
+  // Feedback snippets build chaos then vanish
+  const snippetOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.1, 0.4, PUNCHLINE_START - 0.06, PUNCHLINE_START],
+    [0.15, 0.4, 0.6, 0.65, 0],
+  );
+
+  // Connectors intensify
+  const connectorOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.15, 0.5, PUNCHLINE_START - 0.05, PUNCHLINE_START],
+    [0.15, 0.4, 0.7, 0.85, 0.05],
+  );
+
   return (
     <div className="absolute inset-0" aria-hidden="true">
-      {/* Layered gradient base */}
+      <div className="absolute inset-0 bg-[color:var(--color-background)]" />
+
       <div
         className="absolute inset-0"
         style={{
           background: [
-            "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(232,100,15,0.04) 0%, transparent 70%)",
-            "radial-gradient(ellipse 40% 40% at 15% 20%, rgba(232,100,15,0.03) 0%, transparent 60%)",
-            "radial-gradient(ellipse 40% 40% at 85% 80%, rgba(255,160,122,0.03) 0%, transparent 60%)",
-            "var(--color-background)",
+            "radial-gradient(ellipse 70% 55% at 50% 50%, rgba(232,100,15,0.04) 0%, transparent 70%)",
+            "radial-gradient(ellipse 45% 40% at 12% 20%, rgba(232,100,15,0.025) 0%, transparent 60%)",
+            "radial-gradient(ellipse 45% 40% at 88% 80%, rgba(255,160,122,0.03) 0%, transparent 60%)",
           ].join(", "),
         }}
       />
 
-      {/* Dot pattern */}
-      <div className="absolute inset-0 dot-bg opacity-30 pointer-events-none" />
+      <div className="absolute inset-0 dot-bg opacity-[0.18] pointer-events-none" />
 
-      {/* SVG connector lines with flowing animation */}
-      <svg
+      {/* SVG connectors */}
+      <motion.svg
         className="absolute inset-0 w-full h-full pointer-events-none"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
         fill="none"
+        style={{ opacity: connectorOpacity }}
       >
         <defs>
-          <linearGradient id="conn-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#e8640f" stopOpacity="0.08" />
-            <stop offset="50%" stopColor="#1a1a1a" stopOpacity="0.06" />
-            <stop offset="100%" stopColor="#e8640f" stopOpacity="0.08" />
+          <linearGradient
+            id="problem-conn-grad"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
+            <stop offset="0%" stopColor="#e8640f" stopOpacity="0.16" />
+            <stop offset="50%" stopColor="#6b6b6b" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#e8640f" stopOpacity="0.16" />
           </linearGradient>
         </defs>
         {BG_CONNECTORS.map(([a, b], i) => {
@@ -282,16 +426,19 @@ function DesktopBackground({
               y1={y1}
               x2={x2}
               y2={y2}
-              stroke="url(#conn-grad)"
-              strokeWidth="0.15"
-              strokeDasharray="0.6 1.8"
+              stroke="url(#problem-conn-grad)"
+              strokeWidth="0.14"
+              strokeDasharray="0.6 1.5"
+              vectorEffect="non-scaling-stroke"
+              className="problem-connector-line"
               style={{
-                animation: `dash-flow ${10 + i * 2}s linear infinite`,
+                animationDuration: `${9 + i * 1.4}s`,
+                animationDelay: `${i * 0.2}s`,
               }}
             />
           );
         })}
-      </svg>
+      </motion.svg>
 
       {/* Floating tool cards */}
       {BG_CARDS.map((card, i) => (
@@ -299,79 +446,210 @@ function DesktopBackground({
           key={card.name}
           card={card}
           index={i}
-          scrollYProgress={scrollYProgress}
+          activeStep={activeStep}
+          cardIntensity={cardIntensity}
         />
       ))}
 
-      {/* Center readability vignette */}
+      {/* Customer feedback, metric drops, notifications */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{ opacity: snippetOpacity }}
+      >
+        {FEEDBACK_SNIPPETS.map((snippet, i) => (
+          <FeedbackElement key={i} snippet={snippet} index={i} />
+        ))}
+      </motion.div>
+
+      {/* Center readability veil */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 50% 40% at 50% 50%, rgba(250,249,246,0.85) 0%, rgba(250,249,246,0.4) 50%, transparent 80%)",
+            "radial-gradient(ellipse 36% 18% at 50% 50%, rgba(250,249,246,0.78) 0%, rgba(250,249,246,0.35) 50%, transparent 82%)",
         }}
       />
 
-      {/* Inline keyframes for flowing dash animation */}
       <style>{`
-        @keyframes dash-flow {
+        @keyframes problem-dash-flow {
           to { stroke-dashoffset: -24; }
+        }
+        .problem-connector-line {
+          animation-name: problem-dash-flow;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+        @keyframes problem-card-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(calc(var(--float-amount) * -1)); }
+        }
+        @keyframes problem-snippet-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
         }
       `}</style>
     </div>
   );
 }
 
+/* ── Feedback background element ──────────────────────────────── */
+
+function FeedbackElement({
+  snippet,
+  index,
+}: {
+  snippet: FeedbackSnippet;
+  index: number;
+}) {
+  if (snippet.type === "quote") {
+    return (
+      <div
+        className="absolute max-w-[180px] lg:max-w-[200px] rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-2.5 shadow-sm"
+        style={{
+          top: snippet.top,
+          left: snippet.left,
+          transform: `rotate(${snippet.rotation}deg)`,
+          animation: `problem-snippet-float ${snippet.driftDuration}s ease-in-out ${index * 0.4}s infinite`,
+        }}
+      >
+        <p className="text-[10px] leading-snug text-[color:var(--color-foreground)] italic">
+          {snippet.content}
+        </p>
+        {snippet.subtext && (
+          <p className="mt-1 text-[8.5px] text-[color:var(--color-foreground-muted)] opacity-70">
+            {snippet.subtext}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  if (snippet.type === "metric") {
+    const isDown = snippet.subtext?.includes("↓");
+    return (
+      <div
+        className="absolute w-[120px] lg:w-[140px] rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-2.5 shadow-sm"
+        style={{
+          top: snippet.top,
+          left: snippet.left,
+          transform: `rotate(${snippet.rotation}deg)`,
+          animation: `problem-snippet-float ${snippet.driftDuration}s ease-in-out ${index * 0.3}s infinite`,
+        }}
+      >
+        <p className="text-[9px] text-[color:var(--color-foreground-muted)] uppercase tracking-wider font-medium">
+          {snippet.content}
+        </p>
+        <div className="mt-1 flex items-center gap-1.5">
+          <MiniSparkline down={!!isDown} />
+          <span
+            className={`text-[12px] font-bold tabular-nums ${
+              isDown ? "text-red-500" : "text-amber-600"
+            }`}
+          >
+            {snippet.subtext}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // notification type
+  return (
+    <div
+      className="absolute max-w-[200px] lg:max-w-[220px] rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 py-1.5 shadow-sm flex items-center gap-2"
+      style={{
+        top: snippet.top,
+        left: snippet.left,
+        transform: `rotate(${snippet.rotation}deg)`,
+        animation: `problem-snippet-float ${snippet.driftDuration}s ease-in-out ${index * 0.35}s infinite`,
+      }}
+    >
+      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+      <p className="text-[9px] leading-snug text-[color:var(--color-foreground-muted)] truncate">
+        {snippet.content}
+      </p>
+    </div>
+  );
+}
+
+/* ── Mini sparkline SVG for metric cards ──────────────────────── */
+
+function MiniSparkline({ down }: { down: boolean }) {
+  const path = down
+    ? "M0,2 C4,2 6,3 10,4 C14,5 18,9 24,11"
+    : "M0,10 C4,9 8,7 12,8 C16,9 20,3 24,2";
+  return (
+    <svg
+      width="24"
+      height="12"
+      viewBox="0 0 24 12"
+      fill="none"
+      className="shrink-0"
+    >
+      <path
+        d={path}
+        stroke={down ? "#ef4444" : "#d97706"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/* ── Floating tool card ──────────────────────────────────────── */
+
 function FloatingBGCard({
   card,
   index,
-  scrollYProgress,
+  activeStep,
+  cardIntensity,
 }: {
   card: BGCard;
   index: number;
-  scrollYProgress: MotionValue<number>;
+  activeStep: number;
+  cardIntensity: MotionValue<number>;
 }) {
   const integ = INTEGRATIONS.find((it) => it.name === card.name);
+  const isActive = card.activeLines.includes(activeStep);
 
-  const opacity = useTransform(scrollYProgress, (p) =>
-    interpolateHighlight(p, card.highlightAtLines, 0.22, 0.6),
-  );
-
-  const scale = useTransform(scrollYProgress, (p) =>
-    interpolateHighlight(p, card.highlightAtLines, 1, 1.06),
+  const opacity = useTransform(cardIntensity, (v) =>
+    isActive ? Math.min(1, v * 1.35) : v,
   );
 
   return (
     <motion.div
-      className="absolute w-[180px] lg:w-[210px]"
+      className="absolute w-[170px] lg:w-[205px]"
       style={{
         top: card.top,
         left: card.left,
         rotate: card.rotation,
         opacity,
-        scale,
-      }}
-      animate={{ y: [0, -card.driftAmount, 0] }}
-      transition={{
-        y: {
-          repeat: Infinity,
-          repeatType: "mirror",
-          duration: card.driftDuration,
-          ease: "easeInOut",
-          delay: index * 0.8,
-        },
       }}
     >
-      <ToolSignalCard
-        name={card.name}
-        signal={card.signal}
-        detail={card.detail}
-        badge={card.badge}
-        time={card.time}
-        severity={card.severity}
-        color={integ?.color ?? "#7a7873"}
-        slug={integ?.slug}
-      />
+      <div
+        className="transition-transform duration-500 ease-out"
+        style={
+          {
+            "--float-amount": `${card.driftAmount}px`,
+            animation: `problem-card-float ${card.driftDuration}s ease-in-out ${
+              index * 0.4
+            }s infinite`,
+            transform: isActive ? "scale(1.04)" : "scale(0.97)",
+          } as React.CSSProperties
+        }
+      >
+        <ToolSignalCard
+          name={card.name}
+          signal={card.signal}
+          detail={card.detail}
+          badge={card.badge}
+          time={card.time}
+          severity={card.severity}
+          color={integ?.color ?? "#7a7873"}
+          slug={integ?.slug}
+          highlighted={isActive}
+        />
+      </div>
     </motion.div>
   );
 }
@@ -385,31 +663,34 @@ function DesktopForeground({
 }: {
   scrollYProgress: MotionValue<number>;
 }) {
-  const labelOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.01, PUNCHLINE_RANGE[0] - 0.02, PUNCHLINE_RANGE[0]],
-    [0, 1, 1, 0],
-  );
+  // "The problem" label fully gone well before punchline arrives
+  const labelOpacity = useTransform(scrollYProgress, (p) => {
+    if (p >= PUNCHLINE_START - 0.04) return 0;
+    if (p <= 0.02) return smoothstep(0, 0.02, p);
+    if (p >= PUNCHLINE_START - 0.12) {
+      return 1 - smoothstep(PUNCHLINE_START - 0.12, PUNCHLINE_START - 0.04, p);
+    }
+    return 1;
+  });
 
   return (
     <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 lg:px-8">
       <motion.p
-        className="mb-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-[color:var(--color-primary)]"
+        className="mb-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--color-primary)]"
         style={{ opacity: labelOpacity }}
       >
         The problem
       </motion.p>
 
-      {/* All lines occupy the same grid cell — only one visible at a time */}
       <div
-        className="w-full max-w-3xl"
+        className="w-full max-w-4xl"
         style={{ display: "grid", placeItems: "center" }}
       >
         {NARRATIVE_LINES.map((text, i) => (
-          <ScrollLine
+          <NarrativeLine
             key={i}
             text={text}
-            range={LINE_RANGES[i]}
+            index={i}
             scrollYProgress={scrollYProgress}
           />
         ))}
@@ -419,53 +700,55 @@ function DesktopForeground({
   );
 }
 
-function ScrollLine({
+function NarrativeLine({
   text,
-  range,
+  index,
   scrollYProgress,
 }: {
   text: string;
-  range: [number, number];
+  index: number;
   scrollYProgress: MotionValue<number>;
 }) {
-  const [start, end] = range;
-  const fadeIn = 0.035;
-  const fadeOut = 0.035;
+  const [start, end] = LINE_RANGES[index];
 
-  const opacity = useTransform(
-    scrollYProgress,
-    [start, start + fadeIn, end - fadeOut, end],
-    [0, 1, 1, 0],
-  );
-  const y = useTransform(
-    scrollYProgress,
-    [start, start + fadeIn, end - fadeOut, end],
-    [40, 0, 0, -30],
-  );
-  const blur = useTransform(scrollYProgress, (p) => {
-    if (p < start) return "blur(4px)";
-    if (p < start + fadeIn) {
-      const t = (p - start) / fadeIn;
-      return `blur(${4 * (1 - t)}px)`;
-    }
-    if (p <= end - fadeOut) return "blur(0px)";
-    if (p <= end) {
-      const t = (p - (end - fadeOut)) / fadeOut;
-      return `blur(${4 * t}px)`;
-    }
-    return "blur(4px)";
+  const opacity = useTransform(scrollYProgress, (p) => {
+    if (p < start || p > end) return 0;
+    const fadeInEnd = start + FADE;
+    const fadeOutStart = end - FADE;
+    if (p <= fadeInEnd) return smoothstep(start, fadeInEnd, p);
+    if (p >= fadeOutStart) return 1 - smoothstep(fadeOutStart, end, p);
+    return 1;
+  });
+
+  const y = useTransform(scrollYProgress, (p) => {
+    if (p < start || p > end) return 20;
+    const fadeInEnd = start + FADE;
+    const fadeOutStart = end - FADE;
+    if (p <= fadeInEnd) return 20 * (1 - smoothstep(start, fadeInEnd, p));
+    if (p >= fadeOutStart) return -14 * smoothstep(fadeOutStart, end, p);
+    return 0;
+  });
+
+  const scale = useTransform(scrollYProgress, (p) => {
+    if (p < start || p > end) return 0.96;
+    const fadeInEnd = start + FADE;
+    const fadeOutStart = end - FADE;
+    if (p <= fadeInEnd) return 0.96 + 0.04 * smoothstep(start, fadeInEnd, p);
+    if (p >= fadeOutStart)
+      return 1 - 0.02 * smoothstep(fadeOutStart, end, p);
+    return 1;
   });
 
   return (
     <motion.p
-      className="text-center text-[28px] lg:text-[40px] xl:text-[44px] leading-[1.18] tracking-[-0.02em] text-[color:var(--color-foreground)]"
+      className="text-balance text-center text-[28px] lg:text-[42px] xl:text-[48px] leading-[1.18] tracking-[-0.02em] text-[color:var(--color-foreground)]"
       style={{
         gridRow: 1,
         gridColumn: 1,
         fontFamily: "var(--font-display)",
         opacity,
         y,
-        filter: blur,
+        scale,
       }}
     >
       {text}
@@ -478,32 +761,29 @@ function PunchlineLine({
 }: {
   scrollYProgress: MotionValue<number>;
 }) {
-  const [start] = PUNCHLINE_RANGE;
-  const fade = 0.045;
+  const fadeInEnd = PUNCHLINE_START + 0.08;
 
-  const opacity = useTransform(
-    scrollYProgress,
-    [start, start + fade],
-    [0, 1],
-  );
-  const y = useTransform(scrollYProgress, [start, start + fade], [40, 0]);
-  const scale = useTransform(
-    scrollYProgress,
-    [start, start + fade],
-    [0.95, 1],
-  );
-  const blur = useTransform(scrollYProgress, (p) => {
-    if (p < start) return "blur(6px)";
-    if (p < start + fade) {
-      const t = (p - start) / fade;
-      return `blur(${6 * (1 - t)}px)`;
-    }
-    return "blur(0px)";
+  const opacity = useTransform(scrollYProgress, (p) => {
+    if (p < PUNCHLINE_START) return 0;
+    if (p >= fadeInEnd) return 1;
+    return smoothstep(PUNCHLINE_START, fadeInEnd, p);
+  });
+
+  const y = useTransform(scrollYProgress, (p) => {
+    if (p < PUNCHLINE_START) return 30;
+    if (p >= fadeInEnd) return 0;
+    return 30 * (1 - smoothstep(PUNCHLINE_START, fadeInEnd, p));
+  });
+
+  const scale = useTransform(scrollYProgress, (p) => {
+    if (p < PUNCHLINE_START) return 0.94;
+    if (p >= fadeInEnd) return 1;
+    return 0.94 + 0.06 * smoothstep(PUNCHLINE_START, fadeInEnd, p);
   });
 
   return (
     <motion.p
-      className="text-center text-[26px] lg:text-[34px] xl:text-[38px] leading-[1.2] text-[color:var(--color-foreground)]"
+      className="whitespace-nowrap text-center text-[26px] lg:text-[42px] xl:text-[48px] leading-[1.14] tracking-[-0.02em] text-[color:var(--color-foreground)]"
       style={{
         gridRow: 1,
         gridColumn: 1,
@@ -511,14 +791,13 @@ function PunchlineLine({
         opacity,
         y,
         scale,
-        filter: blur,
       }}
     >
-      We fix the{" "}
+      Squash solves the{" "}
       <span className="italic text-[color:var(--color-primary)]">
-        attention
+        attention problem,
       </span>{" "}
-      problem, not the data problem.
+      not the data problem.
     </motion.p>
   );
 }
@@ -530,7 +809,7 @@ function PunchlineLine({
 function ReducedMotionDesktop() {
   return (
     <div className="py-20 md:py-32 max-w-3xl mx-auto px-6 lg:px-8">
-      <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-primary)]">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-primary)]">
         The problem
       </p>
       <div className="mt-8 space-y-8">
@@ -545,14 +824,14 @@ function ReducedMotionDesktop() {
         ))}
       </div>
       <p
-        className="mt-14 text-center text-[24px] md:text-[30px] leading-snug text-[color:var(--color-foreground)]"
+        className="mt-14 text-center text-[24px] md:text-[32px] leading-snug text-[color:var(--color-foreground)]"
         style={{ fontFamily: "var(--font-display)" }}
       >
-        We fix the{" "}
+        Squash solves the{" "}
         <span className="italic text-[color:var(--color-primary)]">
           attention
         </span>{" "}
-        problem, not the data problem.
+        Problem, not the data problem.
       </p>
     </div>
   );
@@ -567,7 +846,6 @@ const MOBILE_CARD_INDICES = [0, 1, 4, 5];
 function MobileLayout({ reduce }: { reduce: boolean }) {
   return (
     <div className="relative py-16 sm:py-20 overflow-hidden">
-      {/* Background gradient */}
       <div
         className="absolute inset-0"
         style={{
@@ -577,7 +855,6 @@ function MobileLayout({ reduce }: { reduce: boolean }) {
       />
       <div className="absolute inset-0 dot-bg opacity-20 pointer-events-none" />
 
-      {/* Background cards */}
       {!reduce && (
         <div
           className="absolute inset-0 pointer-events-none"
@@ -589,7 +866,7 @@ function MobileLayout({ reduce }: { reduce: boolean }) {
             return (
               <motion.div
                 key={card.name}
-                className="absolute w-[130px] sm:w-[150px] opacity-[0.12]"
+                className="absolute w-[130px] sm:w-[150px] opacity-[0.18]"
                 style={{
                   top: card.mobileTop ?? card.top,
                   left: card.mobileLeft ?? card.left,
@@ -627,7 +904,7 @@ function MobileLayout({ reduce }: { reduce: boolean }) {
           initial={reduce ? false : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[color:var(--color-primary)] text-center"
+          className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-primary)] text-center"
         >
           The problem
         </motion.p>
@@ -640,9 +917,9 @@ function MobileLayout({ reduce }: { reduce: boolean }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{
-                duration: 0.65,
+                duration: 0.7,
                 delay: 0.05,
-                ease: [0.16, 1, 0.3, 1],
+                ease: [0.25, 0.46, 0.45, 0.94],
               }}
               className="text-[20px] sm:text-[24px] leading-[1.25] tracking-[-0.01em] text-[color:var(--color-foreground)] text-center"
               style={{ fontFamily: "var(--font-display)" }}
@@ -656,15 +933,15 @@ function MobileLayout({ reduce }: { reduce: boolean }) {
           initial={reduce ? false : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-14 text-center text-[18px] sm:text-[22px] leading-snug text-[color:var(--color-foreground)]"
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="mt-14 text-center text-[20px] sm:text-[26px] leading-snug text-[color:var(--color-foreground)]"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          We fix the{" "}
+          Squash solves the{" "}
           <span className="italic text-[color:var(--color-primary)]">
             attention
           </span>{" "}
-          problem, not the data problem.
+          Problem, not the data problem.
         </motion.p>
       </div>
     </div>
@@ -684,6 +961,7 @@ function ToolSignalCard({
   severity,
   color,
   slug,
+  highlighted,
 }: {
   name: string;
   signal: string;
@@ -693,9 +971,16 @@ function ToolSignalCard({
   severity: "critical" | "warning" | "info";
   color: string;
   slug?: string | null;
+  highlighted?: boolean;
 }) {
   return (
-    <div className="relative rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-3 shadow-[0_8px_30px_-12px_rgba(26,26,26,0.18)]">
+    <div
+      className={`relative rounded-xl border bg-[color:var(--color-surface)] p-3 transition-shadow duration-500 ${
+        highlighted
+          ? "border-[color:var(--color-primary)]/30 shadow-[0_8px_32px_-8px_rgba(232,100,15,0.2)]"
+          : "border-[color:var(--color-border)] shadow-[0_8px_30px_-12px_rgba(26,26,26,0.18)]"
+      }`}
+    >
       {badge && (
         <span
           className={`absolute -top-2 -right-2 z-10 flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full text-white text-[9px] font-bold tabular-nums shadow-sm ${
