@@ -55,7 +55,7 @@ export function Solution() {
 // ─────────────────────────────────────────────────────────────
 // Flywheel — sources flow IN to Squash, actions flow OUT
 // ─────────────────────────────────────────────────────────────
-const SOURCES = ["Mixpanel", "Hotjar", "Zendesk", "Dynatrace"];
+const SOURCES = ["Mixpanel", "Hotjar", "Zendesk", "Sentry"];
 const ACTIONS = ["Linear", "Slack", "GitHub"];
 
 function FlywheelVisual() {

@@ -37,7 +37,7 @@ export const INTEGRATIONS = [
   // Customer feedback
   { name: "Zendesk", category: "Customer feedback", color: "#03363D", slug: "zendesk" },
   { name: "Intercom", category: "Customer feedback", color: "#1F8DED", slug: "intercom" },
-  { name: "Greylabs AI", category: "Customer feedback", color: "#1F2937", slug: "greylabs" },
+  { name: "Granola", category: "Customer feedback", color: "#D97706", slug: "granola" },
   { name: "Salesforce", category: "Customer feedback", color: "#00A1E0", slug: "salesforce" },
   // Issues + code
   { name: "Jira", category: "Issues & code", color: "#0052CC", slug: "jira" },
@@ -112,10 +112,10 @@ export const SCENARIOS = [
   {
     tag: "Churn signal",
     title: "A churn pattern hiding in feedback.",
-    body: "Three enterprise accounts complained about the same SSO bug across Zendesk, Intercom, and a Greylabs-recorded call. Squash clustered them in one card.",
+    body: "Three enterprise accounts complained about the same SSO bug across Zendesk, Intercom, and a Granola-recorded call. Squash clustered them in one card.",
     metric: "3 accts",
     metricLabel: "₹42L ARR at risk",
-    tools: ["Zendesk", "Intercom", "Greylabs AI"],
+    tools: ["Zendesk", "Intercom", "Granola"],
   },
   {
     tag: "Silent regression",
@@ -167,7 +167,7 @@ export const FAQS = [
   },
   {
     q: "What tools do you integrate with?",
-    a: "Squash plugs into 20+ tools out of the box, including Mixpanel, PostHog, Amplitude, Heap, Hotjar, FullStory, Dynatrace, SigNoz, Zendesk, Intercom, Salesforce, Greylabs AI, Jira, Linear, GitHub, BigQuery, PostgreSQL, Metabase, Notion, Confluence, Slack, and Gmail. We ship new integrations on customer demand, and custom connectors are available on request.",
+    a: "Squash plugs into 20+ tools out of the box, including Mixpanel, PostHog, Amplitude, Heap, Hotjar, FullStory, Sentry, SigNoz, Zendesk, Intercom, Salesforce, Granola, Jira, Linear, GitHub, BigQuery, PostgreSQL, Metabase, Notion, Confluence, Slack, and Gmail. We ship new integrations on customer demand, and custom connectors are available on request.",
   },
   {
     q: "How does setup work? How long to first insight?",

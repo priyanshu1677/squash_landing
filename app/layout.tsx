@@ -150,7 +150,7 @@ const softwareApplicationSchema = {
     "Auto-drafted Linear and Jira tickets with citations to source signals",
     "Slack and Gmail push of high-impact insights with suggested actions",
     "Context-aware copilot for on-demand product, analytics, and feedback questions",
-    "20+ integrations including Mixpanel, PostHog, Amplitude, Hotjar, Dynatrace, Zendesk, Intercom, BigQuery, Linear, and Slack",
+    "20+ integrations including Mixpanel, PostHog, Amplitude, Hotjar, Sentry, Zendesk, Intercom, BigQuery, Linear, and Slack",
   ],
 };
 

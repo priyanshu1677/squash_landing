@@ -1,8 +1,9 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { IntegrationMark } from "./IntegrationMark";
+import { ToolTag } from "./ToolTag";
 import { INTEGRATIONS } from "@/lib/constants";
 
 // Hero visual. Animation arc:
@@ -527,9 +528,84 @@ function CenterPulse({
 // orb at T.cardStart, with staged content reveal.
 // ─────────────────────────────────────────────────────────────
 
+const STEP_ICONS: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
+  scan: {
+    color: "#6B7280",
+    bg: "#F9FAFB",
+    icon: (
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+    ),
+  },
+  data: {
+    color: "#7C3AED",
+    bg: "#F5F3FF",
+    icon: (
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+      </svg>
+    ),
+  },
+  check: {
+    color: "#16A34A",
+    bg: "#F0FDF4",
+    icon: (
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+      </svg>
+    ),
+  },
+  replay: {
+    color: "#0284C7",
+    bg: "#F0F9FF",
+    icon: (
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+    ),
+  },
+};
+
+const INVESTIGATION_STEPS = [
+  {
+    title: "Ticket clustering",
+    time: "08:12 IST",
+    type: "scan",
+    tools: ["Zendesk"],
+    body: "Scanned 142 new tickets from the last 72h. Identified 34 mentioning promo/coupon failures at checkout — all describe the same pattern.",
+  },
+  {
+    title: "Verified discount not reaching payment",
+    time: "08:18 IST",
+    type: "data",
+    tools: ["Mixpanel", "BigQuery"],
+    body: "Cross-referenced 12 user IDs with Mixpanel events. All fired checkout.promo.applied but BigQuery order totals match pre-discount price.",
+  },
+  {
+    title: "Promo codes themselves are valid",
+    time: "08:22 IST",
+    type: "check",
+    tools: ["BigQuery"],
+    body: "Queried the promotions table — SUMMER25, FLAT15, WELCOME10 are all active, within validity dates. Codes aren't the problem.",
+  },
+  {
+    title: "Reviewed 6 session replays",
+    time: "08:28 IST",
+    type: "replay",
+    tools: ["PostHog"],
+    body: "In all 6 sessions, cart summary updates with discount but final confirmation reverts to original total.",
+  },
+];
+
 const InsightCard = function InsightCard(
   { reduce, innerRef }: { reduce: boolean | null; innerRef: React.Ref<HTMLDivElement> },
 ) {
+  const [logOpen, setLogOpen] = useState(false);
+
   const trans = (delay = 0) =>
     reduce
       ? { duration: 0 }
@@ -562,7 +638,7 @@ const InsightCard = function InsightCard(
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={trans(0)}
-        className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-[color:var(--color-border-light)] bg-[color:var(--color-background-tertiary)]"
+        className="flex items-center px-4 sm:px-5 py-3 border-b border-[color:var(--color-border-light)] bg-[color:var(--color-background-tertiary)]"
       >
         <div className="flex items-center gap-2">
           <span className="inline-flex w-5 h-5 rounded-md bg-[color:var(--color-primary)] items-center justify-center">
@@ -577,13 +653,6 @@ const InsightCard = function InsightCard(
             · just now
           </span>
         </div>
-        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-primary)]">
-          <span className="relative inline-flex w-1.5 h-1.5">
-            <span className="absolute inline-flex w-full h-full rounded-full bg-[color:var(--color-primary)] opacity-60 animate-ping" />
-            <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-[color:var(--color-primary)]" />
-          </span>
-          P1 · live
-        </span>
       </motion.div>
 
       <div className="p-4 sm:p-5">
@@ -593,60 +662,132 @@ const InsightCard = function InsightCard(
           transition={trans(0.1)}
           className="text-[15px] sm:text-[16px] font-semibold leading-snug text-[color:var(--color-foreground)]"
         >
-          34 tickets in 72h: promo code applied but not reflected in final charge
+          Promo discounts applied client-side but never persisted to payment gateway
         </motion.h3>
 
-        <motion.div
-          initial={reduce ? false : { opacity: 0, y: 6 }}
+        <motion.p
+          initial={reduce ? false : { opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={trans(0.22)}
-          className="mt-3 p-3 rounded-lg bg-[color:var(--color-primary-subtle)] border border-[color:var(--color-primary-subtle-border)]"
+          transition={trans(0.18)}
+          className="mt-2 text-[12.5px] leading-relaxed text-[color:var(--color-foreground-secondary)]"
         >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[color:var(--color-primary)] flex items-center gap-1.5">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-              <polyline points="22 17 13.5 8.5 8.5 13.5 2 7" />
-              <polyline points="16 17 22 17 22 11" />
-            </svg>
-            Impact
-          </p>
-          <p className="mt-1 text-[14px] font-semibold text-[color:var(--color-foreground)]">
-            ₹3.8L in overcharges issued
-          </p>
-          <p className="text-[11.5px] text-[color:var(--color-foreground-secondary)]">
-            4 enterprise accounts at churn risk
-          </p>
-        </motion.div>
+          34 customers charged full price despite promo codes showing as applied in the UI.
+          The discount is registered client-side but the order payload sent to the payment
+          service omits the discount object, resulting in ₹3.8L in overcharges across 4
+          enterprise accounts over 72 hours.
+        </motion.p>
 
         <motion.div
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={trans(0.34)}
-          className="mt-3 grid grid-cols-4 gap-1.5"
+          transition={trans(0.28)}
+          className="mt-3 flex items-center gap-3 text-[11px]"
         >
-          {[
-            { label: "Tickets", value: "34" },
-            { label: "Users", value: "28" },
-            { label: "Enterprise", value: "4" },
-            { label: "Since", value: "72h" },
-          ].map((s) => (
-            <div
-              key={s.label}
-              className="rounded-md border border-[color:var(--color-border-light)] bg-[color:var(--color-background-tertiary)] px-2 py-1.5"
+          <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[color:var(--color-primary-subtle)] border border-[color:var(--color-primary-subtle-border)] text-[color:var(--color-primary)] font-semibold">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+              <polyline points="22 17 13.5 8.5 8.5 13.5 2 7" />
+              <polyline points="16 17 22 17 22 11" />
+            </svg>
+            ₹3.8L overcharged
+          </span>
+          <span className="text-[color:var(--color-foreground-muted)]">
+            34 tickets · 28 users · 72h
+          </span>
+        </motion.div>
+
+        {/* Investigation log — collapsible */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={trans(0.38)}
+          className="mt-3"
+        >
+          <button
+            type="button"
+            onClick={() => setLogOpen((v) => !v)}
+            className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-[color:var(--color-border-light)] bg-[color:var(--color-background-tertiary)] hover:bg-[color:var(--color-background-secondary)] transition-colors"
+          >
+            <span className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[color:var(--color-foreground-muted)]">
+                Investigation log
+              </span>
+              <span className="text-[10px] font-mono text-[color:var(--color-foreground-muted)]">
+                4 checks · 4 tools · 16 min
+              </span>
+            </span>
+            <motion.svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              animate={{ rotate: logOpen ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="text-[color:var(--color-foreground-muted)]"
+              aria-hidden="true"
             >
-              <p className="text-[8.5px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-foreground-muted)]">
-                {s.label}
-              </p>
-              <p className="text-[13px] font-semibold tabular-nums text-[color:var(--color-foreground)]">
-                {s.value}
-              </p>
-            </div>
-          ))}
+              <polyline points="6 9 12 15 18 9" />
+            </motion.svg>
+          </button>
+
+          <AnimatePresence initial={false}>
+            {logOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+              >
+                <ol className="relative pl-3 pt-3 pb-1">
+                  <div
+                    className="absolute left-[17px] top-4 bottom-3 w-px bg-[color:var(--color-border)]"
+                    aria-hidden="true"
+                  />
+                  {INVESTIGATION_STEPS.map((step) => (
+                    <li
+                      key={step.title}
+                      className="relative flex gap-2.5 pb-3.5 last:pb-0"
+                    >
+                      <div
+                        className="relative z-10 flex-shrink-0 w-[22px] h-[22px] rounded-full flex items-center justify-center border-2 border-white"
+                        style={{ backgroundColor: STEP_ICONS[step.type].bg, color: STEP_ICONS[step.type].color }}
+                      >
+                        {STEP_ICONS[step.type].icon}
+                      </div>
+                      <div className="flex-1 min-w-0 pt-0.5">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-[11.5px] font-semibold text-[color:var(--color-foreground)]">
+                            {step.title}
+                          </span>
+                          <span className="text-[9px] font-mono text-[color:var(--color-foreground-muted)]">
+                            {step.time}
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-[10.5px] leading-snug text-[color:var(--color-foreground-secondary)]">
+                          {step.body}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                          {step.tools.map((t) => (
+                            <ToolTag key={t} name={t} size="xs" />
+                          ))}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={trans(0.46)}
+          transition={trans(0.48)}
           className="mt-3 flex items-center gap-2"
         >
           <span className="text-[10px] uppercase tracking-[0.08em] text-[color:var(--color-foreground-muted)] font-semibold">
