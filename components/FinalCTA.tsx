@@ -46,10 +46,6 @@ export function FinalCTA() {
             Email the founders
           </a>
         </div>
-
-        <p className="mt-8 text-[12px] text-[color:var(--color-foreground-muted)]">
-          We handle setup. Founders on Slack. No engineering work needed.
-        </p>
       </div>
     </section>
   );
